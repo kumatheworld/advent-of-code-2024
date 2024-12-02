@@ -1,29 +1,23 @@
 advent_of_code::solution!(1);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn parse(input: &str) -> (Vec<i32>, Vec<i32>) {
     let mut first_column = Vec::new();
     let mut second_column = Vec::new();
 
     for line in input.lines() {
-        let mut parts = line.split_whitespace();
-        let first = parts
-            .next()
-            .ok_or("Missing first column")
-            .ok()?
-            .trim()
-            .parse::<i32>()
-            .ok()?;
-        let second = parts
-            .next()
-            .ok_or("Missing second column")
-            .ok()?
-            .trim()
-            .parse::<i32>()
-            .ok()?;
+        let parts: Vec<_> = line.split_whitespace().collect();
+        let first = parts[0].parse::<i32>().unwrap();
+        let second = parts[1].parse::<i32>().unwrap();
 
         first_column.push(first);
         second_column.push(second);
     }
+
+    (first_column, second_column)
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (mut first_column, mut second_column) = parse(input);
 
     first_column.sort();
     second_column.sort();
