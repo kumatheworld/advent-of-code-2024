@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 advent_of_code::solution!(1);
 
 fn parse(input: &str) -> (Vec<i32>, Vec<i32>) {
@@ -31,7 +33,21 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (first_column, second_column) = parse(input);
+    let mut counter: HashMap<i32, u32> = HashMap::new();
+
+    for key in second_column {
+        let value = counter.entry(key).or_default();
+        *value += 1;
+    }
+
+    let mut sum: u32 = 0;
+    for key in first_column {
+        let value = counter.entry(key).or_default();
+        sum += key as u32 * *value;
+    }
+
+    Some(sum)
 }
 
 #[cfg(test)]
