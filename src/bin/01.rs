@@ -1,53 +1,33 @@
-use std::collections::HashMap;
+use itertools::Itertools;
 
 advent_of_code::solution!(1);
 
-fn parse(input: &str) -> (Vec<i32>, Vec<i32>) {
-    let mut first_column = Vec::new();
-    let mut second_column = Vec::new();
-
-    for line in input.lines() {
-        let parts: Vec<_> = line.split_whitespace().collect();
-        let first = parts[0].parse::<i32>().unwrap();
-        let second = parts[1].parse::<i32>().unwrap();
-
-        first_column.push(first);
-        second_column.push(second);
-    }
-
-    (first_column, second_column)
+fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
+    input
+        .lines()
+        .filter_map(|line| line.split_whitespace().next_tuple())
+        .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
+        .unzip()
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let (mut first_column, mut second_column) = parse(input);
-
-    first_column.sort();
-    second_column.sort();
-
-    let mut sum: u32 = 0;
-    for (first, second) in first_column.iter().zip(second_column.iter()) {
-        sum += (first - second).abs() as u32;
-    }
-
-    Some(sum)
+    let (left, right) = parse(input);
+    Some(
+        left.iter()
+            .sorted()
+            .zip(right.iter().sorted())
+            .map(|(m, n)| m.abs_diff(*n))
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let (first_column, second_column) = parse(input);
-    let mut counter: HashMap<i32, u32> = HashMap::new();
-
-    for key in second_column {
-        let value = counter.entry(key).or_default();
-        *value += 1;
-    }
-
-    let mut sum: u32 = 0;
-    for key in first_column {
-        let value = counter.entry(key).or_default();
-        sum += key as u32 * *value;
-    }
-
-    Some(sum)
+    let (left, right) = parse(input);
+    Some(
+        left.iter()
+            .map(|m| m * right.iter().filter(|n| *n == m).count() as u32)
+            .sum(),
+    )
 }
 
 #[cfg(test)]
