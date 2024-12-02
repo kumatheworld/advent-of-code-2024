@@ -26,7 +26,23 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut sum: u32 = 0;
+    for line in input.lines() {
+        let levels: Vec<i32> = line.split(" ").map(|x| x.parse::<i32>().unwrap()).collect();
+        if safe(&levels) {
+            sum += 1
+        } else {
+            for i in 0..levels.len() {
+                let mut levels_removed = levels.clone();
+                levels_removed.remove(i);
+                if safe(&levels_removed) {
+                    sum += 1;
+                    break;
+                }
+            }
+        }
+    }
+    Some(sum)
 }
 
 #[cfg(test)]
