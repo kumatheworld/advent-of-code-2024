@@ -29,16 +29,12 @@ pub fn part_two(input: &str) -> Option<u32> {
     let mut sum: u32 = 0;
     for line in input.lines() {
         let levels: Vec<i32> = line.split(" ").map(|x| x.parse::<i32>().unwrap()).collect();
-        if safe(&levels) {
-            sum += 1
-        } else {
-            for i in 0..levels.len() {
-                let mut levels_removed = levels.clone();
-                levels_removed.remove(i);
-                if safe(&levels_removed) {
-                    sum += 1;
-                    break;
-                }
+        for i in 0..levels.len() {
+            let mut levels_removed = levels.clone();
+            levels_removed.remove(i);
+            if safe(&levels_removed) {
+                sum += 1;
+                break;
             }
         }
     }
