@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use regex::Regex;
 
 advent_of_code::solution!(3);
@@ -14,7 +15,12 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    part_one(
+        &input
+            .split("do()")
+            .map(|s| &s[0..s.find("don't()").unwrap_or(s.len())])
+            .join(""),
+    )
 }
 
 #[cfg(test)]
