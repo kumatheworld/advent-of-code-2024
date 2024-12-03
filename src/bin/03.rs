@@ -7,9 +7,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
     Some(
         re.captures_iter(input)
-            .map(|c| c.extract())
-            .map(|(_, [m, n])| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
-            .map(|(m, n)| m * n)
+            .map(|c| c[1].parse::<u32>().unwrap() * c[2].parse::<u32>().unwrap())
             .sum::<u32>(),
     )
 }
