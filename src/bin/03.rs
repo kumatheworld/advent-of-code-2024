@@ -1,7 +1,16 @@
+use regex::Regex;
+
 advent_of_code::solution!(3);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    None
+    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
+    Some(
+        re.captures_iter(input)
+            .map(|c| c.extract())
+            .map(|(_, [m, n])| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
+            .map(|(m, n)| m * n)
+            .sum::<u32>(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
