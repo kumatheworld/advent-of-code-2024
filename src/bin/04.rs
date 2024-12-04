@@ -5,7 +5,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let m = rows.len() as i32;
     let n = rows[0].len() as i32;
     let s = input.as_bytes();
-    let charat = |i: i32, j: i32, c: u8| s[((n + 1) * i + j) as usize] == c;
+    let charatis = |i: i32, j: i32, c: u8| s[((n + 1) * i + j) as usize] == c;
 
     let mut sum: u32 = 0;
     for i in 0..m {
@@ -16,10 +16,10 @@ pub fn part_one(input: &str) -> Option<u32> {
                     let jj = j + 3 * dj;
                     sum += ((0..m).contains(&ii)
                         && (0..n).contains(&jj)
-                        && charat(i, j, b'X')
-                        && charat(i + di, j + dj, b'M')
-                        && charat(i + 2 * di, j + 2 * dj, b'A')
-                        && charat(ii, jj, b'S')) as u32;
+                        && charatis(i, j, b'X')
+                        && charatis(i + di, j + dj, b'M')
+                        && charatis(i + 2 * di, j + 2 * dj, b'A')
+                        && charatis(ii, jj, b'S')) as u32;
                 }
             }
         }
