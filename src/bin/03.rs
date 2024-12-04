@@ -4,9 +4,10 @@ use regex::Regex;
 advent_of_code::solution!(3);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let re = Regex::new(r"mul\((\d+),(\d+)\)").unwrap();
     Some(
-        re.captures_iter(input)
+        Regex::new(r"mul\((\d+),(\d+)\)")
+            .unwrap()
+            .captures_iter(input)
             .map(|c| c[1].parse::<u32>().unwrap() * c[2].parse::<u32>().unwrap())
             .sum::<u32>(),
     )
