@@ -17,7 +17,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     part_one(
         &input
             .split("do()")
-            .map(|s| &s[0..s.find("don't()").unwrap_or(s.len())])
+            .map(|s| &s[..s.find("don't()").unwrap_or(s.len())])
             .join(""),
     )
 }
