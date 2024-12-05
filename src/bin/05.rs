@@ -1,7 +1,42 @@
+use itertools::Itertools;
+use std::collections::{HashMap, HashSet};
+
 advent_of_code::solution!(5);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    None
+    let rules_and_seqs = input.split("\n\n").collect_vec();
+
+    let rules = rules_and_seqs[0]
+        .lines()
+        .filter_map(|line| line.split('|').next_tuple())
+        .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()));
+    let mut one2many: HashMap<u32, HashSet<u32>> = HashMap::new();
+    for (m, n) in rules {
+        one2many.entry(m).or_insert_with(HashSet::new).insert(n);
+    }
+
+    Some(
+        rules_and_seqs[1]
+            .lines()
+            .map(|line| {
+                let pages = line
+                    .split(',')
+                    .map(|elem| elem.parse::<u32>().unwrap())
+                    .collect_vec();
+                if pages.iter().enumerate().all(|(i, p)| {
+                    pages[i + 1..]
+                        .iter()
+                        .copied()
+                        .collect::<HashSet<_>>()
+                        .is_subset(one2many.entry(*p).or_default())
+                }) {
+                    pages[pages.len() / 2]
+                } else {
+                    0
+                }
+            })
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
