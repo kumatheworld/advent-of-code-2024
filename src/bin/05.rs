@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 advent_of_code::solution!(5);
 
-fn prep(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
+fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
     let rules_and_seqs = input.split("\n\n").collect_vec();
 
     let rules = rules_and_seqs[0]
@@ -51,7 +51,7 @@ fn prep(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    Some(prep(input).filter_map(|r| r.ok()).sum())
+    Some(common(input).filter_map(|r| r.ok()).sum())
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
