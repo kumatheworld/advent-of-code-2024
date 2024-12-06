@@ -3,7 +3,12 @@ use std::collections::{HashMap, HashSet};
 
 advent_of_code::solution!(5);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn prep(
+    input: &str,
+) -> (
+    HashMap<u32, HashSet<u32>>,
+    impl Iterator<Item = Vec<u32>> + '_,
+) {
     let rules_and_seqs = input.split("\n\n").collect_vec();
 
     let rules = rules_and_seqs[0]
@@ -15,27 +20,32 @@ pub fn part_one(input: &str) -> Option<u32> {
         one2many.entry(m).or_insert_with(HashSet::new).insert(n);
     }
 
+    let seqs = rules_and_seqs[1].lines().map(|line| {
+        line.split(',')
+            .map(|elem| elem.parse::<u32>().unwrap())
+            .collect_vec()
+    });
+
+    (one2many, seqs)
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (one2many, seqs) = prep(input);
     Some(
-        rules_and_seqs[1]
-            .lines()
-            .map(|line| {
-                let pages = line
-                    .split(',')
-                    .map(|elem| elem.parse::<u32>().unwrap())
-                    .collect_vec();
-                if pages.iter().enumerate().all(|(i, p)| {
-                    pages[i + 1..]
-                        .iter()
-                        .copied()
-                        .collect::<HashSet<_>>()
-                        .is_subset(one2many.entry(*p).or_default())
-                }) {
-                    pages[pages.len() / 2]
-                } else {
-                    0
-                }
-            })
-            .sum(),
+        seqs.map(|pages| {
+            if pages.iter().enumerate().all(|(i, p)| {
+                pages[i + 1..]
+                    .iter()
+                    .copied()
+                    .collect::<HashSet<_>>()
+                    .is_subset(&one2many.get(p).cloned().unwrap_or(HashSet::new()))
+            }) {
+                pages[pages.len() / 2]
+            } else {
+                0
+            }
+        })
+        .sum(),
     )
 }
 
