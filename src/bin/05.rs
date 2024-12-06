@@ -3,50 +3,55 @@ use std::collections::{HashMap, HashSet};
 
 advent_of_code::solution!(5);
 
-fn prep(
-    input: &str,
-) -> (
-    HashMap<u32, HashSet<u32>>,
-    impl Iterator<Item = Vec<u32>> + '_,
-) {
+fn prep(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
     let rules_and_seqs = input.split("\n\n").collect_vec();
 
     let rules = rules_and_seqs[0]
         .lines()
         .filter_map(|line| line.split('|').next_tuple())
         .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()));
+
     let mut one2many: HashMap<u32, HashSet<u32>> = HashMap::new();
     for (m, n) in rules {
         one2many.entry(m).or_insert_with(HashSet::new).insert(n);
     }
 
-    let seqs = rules_and_seqs[1].lines().map(|line| {
-        line.split(',')
+    rules_and_seqs[1].lines().map(move |line| {
+        let pages = line
+            .split(',')
             .map(|elem| elem.parse::<u32>().unwrap())
-            .collect_vec()
-    });
+            .collect_vec();
 
-    (one2many, seqs)
-}
-
-pub fn part_one(input: &str) -> Option<u32> {
-    let (one2many, seqs) = prep(input);
-    Some(
-        seqs.map(|pages| {
-            if pages.iter().enumerate().all(|(i, p)| {
-                pages[i + 1..]
+        // Count the number of subsequent pages for every page
+        // It is a permutation of 0..pages.len() thanks to the fact that p|p does not hold
+        // and that either one of p|q or q|p holds for each distinct pair (p, q) of pages
+        let num_next_pages = pages
+            .iter()
+            .map(|p| {
+                pages
                     .iter()
                     .copied()
                     .collect::<HashSet<_>>()
-                    .is_subset(&one2many.get(p).cloned().unwrap_or(HashSet::new()))
-            }) {
-                pages[pages.len() / 2]
-            } else {
-                0
-            }
-        })
-        .sum(),
-    )
+                    .intersection(&one2many.get(p).cloned().unwrap_or(HashSet::new()))
+                    .count()
+            })
+            .collect_vec();
+
+        let mid = pages[num_next_pages
+            .iter()
+            .position(|&i| i == pages.len() / 2)
+            .unwrap()];
+
+        if num_next_pages == (0..pages.len()).rev().collect_vec() {
+            Ok(mid)
+        } else {
+            Err(mid)
+        }
+    })
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    Some(prep(input).filter_map(|r| r.ok()).sum())
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
