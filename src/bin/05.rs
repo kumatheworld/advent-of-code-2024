@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 advent_of_code::solution!(5);
 
 fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
-    let (rules, seqs) = input.split_once("\n\n").unwrap();
+    let (rules, updates) = input.split_once("\n\n").unwrap();
 
     let rules = rules.lines().map(|line| {
         line.split_once('|')
@@ -17,7 +17,7 @@ fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
         one2many.entry(m).or_insert_with(HashSet::new).insert(n);
     }
 
-    seqs.lines().map(move |line| {
+    updates.lines().map(move |line| {
         let pages = line
             .split(',')
             .map(|elem| elem.parse::<u32>().unwrap())
