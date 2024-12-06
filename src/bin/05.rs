@@ -4,19 +4,20 @@ use std::collections::{HashMap, HashSet};
 advent_of_code::solution!(5);
 
 fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
-    let rules_and_seqs = input.split("\n\n").collect_vec();
+    let (rules, seqs) = input.split_once("\n\n").unwrap();
 
-    let rules = rules_and_seqs[0]
-        .lines()
-        .filter_map(|line| line.split('|').next_tuple())
-        .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()));
+    let rules = rules.lines().map(|line| {
+        line.split_once('|')
+            .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
+            .unwrap()
+    });
 
     let mut one2many: HashMap<u32, HashSet<u32>> = HashMap::new();
     for (m, n) in rules {
         one2many.entry(m).or_insert_with(HashSet::new).insert(n);
     }
 
-    rules_and_seqs[1].lines().map(move |line| {
+    seqs.lines().map(move |line| {
         let pages = line
             .split(',')
             .map(|elem| elem.parse::<u32>().unwrap())
