@@ -32,7 +32,7 @@ fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
                     .iter()
                     .copied()
                     .collect::<HashSet<_>>()
-                    .intersection(&one2many.get(p).cloned().unwrap_or(HashSet::new()))
+                    .intersection(one2many.get(p).unwrap_or(&HashSet::new()))
                     .count()
             })
             .collect_vec();
