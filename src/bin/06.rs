@@ -11,7 +11,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mut d = 0;
 
     mat[(i, j)] = b'X';
-    let mut sum: u32 = 1;
+    let mut sum = 1;
     loop {
         i += di[d];
         j += dj[d];
