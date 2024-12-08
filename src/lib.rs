@@ -21,6 +21,10 @@ impl Matrix {
         Matrix { matrix, rows, cols }
     }
 
+    fn serialize(&self, i: i32, j: i32) -> usize {
+        self.cols * i as usize + j as usize
+    }
+
     pub fn get(&self, i: i32, j: i32) -> Option<u8> {
         if (0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j) {
             Some(self[(i, j)])
@@ -39,12 +43,12 @@ impl std::ops::Index<(i32, i32)> for Matrix {
     type Output = u8;
 
     fn index(&self, (i, j): (i32, i32)) -> &Self::Output {
-        &self.matrix[self.cols * i as usize + j as usize]
+        &self.matrix[self.serialize(i, j)]
     }
 }
 
 impl std::ops::IndexMut<(i32, i32)> for Matrix {
     fn index_mut(&mut self, (i, j): (i32, i32)) -> &mut Self::Output {
-        &mut self.matrix[self.cols * i as usize + j as usize]
+        &mut self.matrix[self.serialize(i, j)]
     }
 }
