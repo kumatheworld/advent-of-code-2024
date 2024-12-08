@@ -43,10 +43,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let mat0 = Matrix::from(input);
     let (i0, j0) = mat0.find(b'^').unwrap();
+    let mut mat1 = mat0.clone();
+    patrol(&mut mat1, i0, j0);
+
     Some(
         iproduct!(0..mat0.rows as i32, 0..mat0.cols as i32)
             .filter(|&(ii, jj)| {
-                mat0[(ii, jj)] == b'.' && {
+                mat1[(ii, jj)] == b'X' && (ii != i0 || jj != j0) && {
                     let mut mat = mat0.clone();
                     mat[(ii, jj)] = b'#';
                     patrol(&mut mat, i0, j0) == None
