@@ -1,4 +1,5 @@
 use advent_of_code::Matrix;
+use itertools::iproduct;
 
 advent_of_code::solution!(6);
 
@@ -40,7 +41,19 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mat0 = Matrix::from(input);
+    let (i0, j0) = mat0.find(b'^').unwrap();
+    Some(
+        iproduct!(0..mat0.rows as i32, 0..mat0.cols as i32)
+            .filter(|&(ii, jj)| {
+                mat0[(ii, jj)] == b'.' && {
+                    let mut mat = mat0.clone();
+                    mat[(ii, jj)] = b'#';
+                    patrol(&mut mat, i0, j0) == None
+                }
+            })
+            .count() as u32,
+    )
 }
 
 #[cfg(test)]
