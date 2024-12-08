@@ -10,12 +10,10 @@ pub struct Matrix<'a> {
 
 impl<'a> Matrix<'a> {
     pub fn from(input: &'a str) -> Self {
-        let rows = input.lines().collect::<Vec<_>>();
-        Matrix {
-            matrix: input.as_bytes(),
-            rows: rows.len(),
-            cols: rows[0].len(),
-        }
+        let cols = input.find('\n').unwrap();
+        let rows = (input.trim().len() + 1) / (cols + 1);
+        let matrix = input.as_bytes();
+        Matrix { matrix, rows, cols }
     }
 
     pub fn get(&self, i: i32, j: i32) -> Option<u8> {
