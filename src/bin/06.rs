@@ -12,7 +12,7 @@ fn patrol(mat: &mut Matrix, i0: i32, j0: i32) -> Option<u32> {
 
     mat[(i, j)] = b'X';
     let mut sum = 1;
-    // mat0.rows * mat0.cols times should be enough to see if there's a loop
+    // mat.rows * mat.cols times should be enough to see if there's a loop
     for _ in 0..mat.rows * mat.cols {
         i += DI[d];
         j += DJ[d];
