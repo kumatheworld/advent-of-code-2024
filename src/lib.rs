@@ -2,17 +2,22 @@ pub mod template;
 
 // Use this file to add helper functions and additional modules.
 #[derive(Debug)]
-pub struct Matrix<'a> {
-    matrix: &'a [u8],
+pub struct Matrix {
+    matrix: Box<[u8]>,
     pub rows: usize,
     pub cols: usize,
 }
 
-impl<'a> Matrix<'a> {
-    pub fn from(input: &'a str) -> Self {
+impl Matrix {
+    pub fn from(input: &str) -> Self {
         let cols = input.find('\n').unwrap();
         let rows = (input.trim().len() + 1) / (cols + 1);
-        let matrix = input.as_bytes();
+        let matrix = input
+            .trim()
+            .lines()
+            .flat_map(|line| line.bytes())
+            .collect::<Vec<_>>()
+            .into_boxed_slice();
         Matrix { matrix, rows, cols }
     }
 
@@ -26,17 +31,14 @@ impl<'a> Matrix<'a> {
 
     pub fn find(&self, b: u8) -> Option<(i32, i32)> {
         let index = self.matrix.iter().position(|&b_| b_ == b)?;
-        Some((
-            (index / (self.cols + 1)) as i32,
-            (index % (self.cols + 1)) as i32,
-        ))
+        Some(((index / self.cols) as i32, (index % self.cols) as i32))
     }
 }
 
-impl std::ops::Index<(i32, i32)> for Matrix<'_> {
+impl std::ops::Index<(i32, i32)> for Matrix {
     type Output = u8;
 
     fn index(&self, (i, j): (i32, i32)) -> &Self::Output {
-        &self.matrix[(self.cols + 1) * i as usize + j as usize]
+        &self.matrix[self.cols * i as usize + j as usize]
     }
 }
