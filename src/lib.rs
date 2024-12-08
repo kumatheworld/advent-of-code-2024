@@ -27,6 +27,14 @@ impl<'a> Matrix<'a> {
             None
         }
     }
+
+    pub fn find(&self, b: u8) -> Option<(i32, i32)> {
+        let index = self.matrix.iter().position(|&b_| b_ == b)?;
+        Some((
+            (index / (self.cols + 1)) as i32,
+            (index % (self.cols + 1)) as i32,
+        ))
+    }
 }
 
 impl Index<(i32, i32)> for Matrix<'_> {
