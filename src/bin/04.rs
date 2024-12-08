@@ -1,30 +1,24 @@
+use advent_of_code::Matrix;
+
 advent_of_code::solution!(4);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let rows: Vec<&str> = input.lines().collect();
-    let m = rows.len() as i32;
-    let n = rows[0].len() as i32;
-    let s = input.as_bytes();
-    let charatis = |i: i32, j: i32, c: u8| s[((n + 1) * i + j) as usize] == c;
+    let mat = Matrix::from(input);
 
     let mut sum: u32 = 0;
-    for i in 0..m {
-        for j in 0..n {
+    for i in 0..mat.rows as i32 {
+        for j in 0..mat.cols as i32 {
             for di in -1..=1 {
                 for dj in -1..=1 {
-                    let ii = i + 3 * di;
-                    let jj = j + 3 * dj;
-                    sum += ((0..m).contains(&ii)
-                        && (0..n).contains(&jj)
-                        && charatis(i, j, b'X')
-                        && charatis(i + di, j + dj, b'M')
-                        && charatis(i + 2 * di, j + 2 * dj, b'A')
-                        && charatis(ii, jj, b'S')) as u32;
+                    // Check 'S' first to avoid out-of-bounds errors
+                    sum += (mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
+                        && mat[(i + 2 * di, j + 2 * dj)] == b'A'
+                        && mat[(i + di, j + dj)] == b'M'
+                        && mat[(i, j)] == b'X') as u32
                 }
             }
         }
     }
-
     Some(sum)
 }
 
