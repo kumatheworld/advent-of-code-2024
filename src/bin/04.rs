@@ -23,25 +23,21 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let rows: Vec<&str> = input.lines().collect();
-    let m = rows.len();
-    let n = rows[0].len();
-    let s = input.as_bytes();
-    let mmss = vec![b'M', b'M', b'S', b'S'];
-    let charat = |i: usize, j: usize| s[(n + 1) * i + j];
+    let mat = Matrix::from(input);
+    let mmss = [b'M', b'M', b'S', b'S'];
 
     let mut sum: u32 = 0;
-    for i in 1..(m - 1) {
-        for j in 1..(n - 1) {
-            if charat(i, j) != b'A' {
+    for i in 1..(mat.rows - 1) as i32 {
+        for j in 1..(mat.cols - 1) as i32 {
+            if mat[(i, j)] != b'A' {
                 continue;
             }
 
-            let mut edges = vec![
-                charat(i - 1, j - 1),
-                charat(i - 1, j + 1),
-                charat(i + 1, j - 1),
-                charat(i + 1, j + 1),
+            let mut edges = [
+                mat[(i - 1, j - 1)],
+                mat[(i - 1, j + 1)],
+                mat[(i + 1, j - 1)],
+                mat[(i + 1, j + 1)],
             ];
             if edges[0] == edges[3] {
                 continue;
