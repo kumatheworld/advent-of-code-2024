@@ -42,3 +42,9 @@ impl std::ops::Index<(i32, i32)> for Matrix {
         &self.matrix[self.cols * i as usize + j as usize]
     }
 }
+
+impl std::ops::IndexMut<(i32, i32)> for Matrix {
+    fn index_mut(&mut self, (i, j): (i32, i32)) -> &mut Self::Output {
+        &mut self.matrix[self.cols * i as usize + j as usize]
+    }
+}
