@@ -7,3 +7,14 @@ pub struct Matrix<'a> {
     pub rows: usize,
     pub cols: usize,
 }
+
+impl<'a> Matrix<'a> {
+    pub fn from(input: &'a str) -> Self {
+        let rows = input.lines().collect::<Vec<_>>();
+        Matrix {
+            matrix: input.as_bytes(),
+            rows: rows.len(),
+            cols: rows[0].len(),
+        }
+    }
+}
