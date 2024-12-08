@@ -6,15 +6,17 @@ advent_of_code::solution!(4);
 pub fn part_one(input: &str) -> Option<u32> {
     let mat = Matrix::from(input);
     Some(
-        iproduct!(0..mat.rows as i32, 0..mat.cols as i32, -1..=1, -1..=1)
-            .filter(|&(i, j, di, dj)| {
-                // Check 'S' first to avoid out-of-bounds errors
-                mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
-                    && mat[(i + 2 * di, j + 2 * dj)] == b'A'
-                    && mat[(i + di, j + dj)] == b'M'
-                    && mat[(i, j)] == b'X'
-            })
-            .count() as u32,
+        iproduct!(
+            iproduct!(0..mat.rows as i32, 0..mat.cols as i32).filter(|&(i, j)| mat[(i, j)] == b'X'),
+            iproduct!(-1..=1, -1..=1).filter(|&(di, dj)| di != 0 || dj != 0)
+        )
+        .filter(|&((i, j), (di, dj))| {
+            // Check 'S' first to avoid out-of-bounds errors
+            mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
+                && mat[(i + 2 * di, j + 2 * dj)] == b'A'
+                && mat[(i + di, j + dj)] == b'M'
+        })
+        .count() as u32,
     )
 }
 
