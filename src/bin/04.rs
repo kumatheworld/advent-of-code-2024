@@ -23,32 +23,24 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let mat = Matrix::from(input);
     let mmss = [b'M', b'M', b'S', b'S'];
-
-    let mut sum: u32 = 0;
-    for i in 1..(mat.rows - 1) as i32 {
-        for j in 1..(mat.cols - 1) as i32 {
-            if mat[(i, j)] != b'A' {
-                continue;
-            }
-
-            let mut edges = [
-                mat[(i - 1, j - 1)],
-                mat[(i - 1, j + 1)],
-                mat[(i + 1, j - 1)],
-                mat[(i + 1, j + 1)],
-            ];
-            if edges[0] == edges[3] {
-                continue;
-            }
-
-            edges.sort();
-            if edges == mmss {
-                sum += 1;
-            }
-        }
-    }
-
-    Some(sum)
+    Some(
+        iproduct!(1..(mat.rows - 1) as i32, 1..(mat.cols - 1) as i32)
+            .filter(|&(i, j)| {
+                mat[(i, j)] == b'A' && {
+                    let mut edges = [
+                        mat[(i - 1, j - 1)],
+                        mat[(i - 1, j + 1)],
+                        mat[(i + 1, j - 1)],
+                        mat[(i + 1, j + 1)],
+                    ];
+                    edges[0] != edges[3] && {
+                        edges.sort();
+                        edges == mmss
+                    }
+                }
+            })
+            .count() as u32,
+    )
 }
 
 #[cfg(test)]
