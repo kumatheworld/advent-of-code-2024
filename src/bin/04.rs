@@ -1,25 +1,21 @@
 use advent_of_code::Matrix;
+use itertools::iproduct;
 
 advent_of_code::solution!(4);
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mat = Matrix::from(input);
-
-    let mut sum: u32 = 0;
-    for i in 0..mat.rows as i32 {
-        for j in 0..mat.cols as i32 {
-            for di in -1..=1 {
-                for dj in -1..=1 {
-                    // Check 'S' first to avoid out-of-bounds errors
-                    sum += (mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
-                        && mat[(i + 2 * di, j + 2 * dj)] == b'A'
-                        && mat[(i + di, j + dj)] == b'M'
-                        && mat[(i, j)] == b'X') as u32
-                }
-            }
-        }
-    }
-    Some(sum)
+    Some(
+        iproduct!(0..mat.rows as i32, 0..mat.cols as i32, -1..=1, -1..=1)
+            .filter(|&(i, j, di, dj)| {
+                // Check 'S' first to avoid out-of-bounds errors
+                mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
+                    && mat[(i + 2 * di, j + 2 * dj)] == b'A'
+                    && mat[(i + di, j + dj)] == b'M'
+                    && mat[(i, j)] == b'X'
+            })
+            .count() as u32,
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
