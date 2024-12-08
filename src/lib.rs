@@ -1,7 +1,7 @@
 pub mod template;
 
 // Use this file to add helper functions and additional modules.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Matrix {
     matrix: Box<[u8]>,
     pub rows: usize,
