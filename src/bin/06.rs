@@ -2,35 +2,41 @@ use advent_of_code::Matrix;
 
 advent_of_code::solution!(6);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    let mut mat = Matrix::from(input);
-    let (mut i, mut j) = mat.find(b'^').unwrap();
-
-    let di = [-1, 0, 1, 0];
-    let dj = [0, 1, 0, -1];
+fn patrol(mat: &mut Matrix, i0: i32, j0: i32) -> Option<u32> {
+    static DI: [i32; 4] = [-1, 0, 1, 0];
+    static DJ: [i32; 4] = [0, 1, 0, -1];
     let mut d = 0;
+    let mut i = i0;
+    let mut j = j0;
 
     mat[(i, j)] = b'X';
     let mut sum = 1;
-    loop {
-        i += di[d];
-        j += dj[d];
+    // mat0.rows * mat0.cols times should be enough to see if there's a loop
+    for _ in 0..mat.rows * mat.cols {
+        i += DI[d];
+        j += DJ[d];
         match mat.get(i, j) {
             Some(b'.') => {
                 sum += 1;
                 mat[(i, j)] = b'X';
             }
             Some(b'#') => {
-                i -= di[d];
-                j -= dj[d];
+                i -= DI[d];
+                j -= DJ[d];
                 d = (d + 1) % 4;
             }
             Some(b'X') => continue,
             Some(_) => panic!(),
-            None => break,
+            None => return Some(sum),
         }
     }
-    Some(sum)
+    None
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let mut mat = Matrix::from(input);
+    let (i0, j0) = mat.find(b'^').unwrap();
+    patrol(&mut mat, i0, j0)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
