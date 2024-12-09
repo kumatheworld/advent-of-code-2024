@@ -26,11 +26,8 @@ impl Matrix {
     }
 
     pub fn get(&self, i: i32, j: i32) -> Option<u8> {
-        if (0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j) {
-            Some(self[(i, j)])
-        } else {
-            None
-        }
+        ((0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j))
+            .then(|| self[(i, j)])
     }
 
     pub fn find(&self, b: u8) -> Option<(i32, i32)> {
