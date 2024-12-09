@@ -1,6 +1,14 @@
 advent_of_code::solution!(7);
 
-pub fn part_one(input: &str) -> Option<u64> {
+fn add(m: u64, n: u64) -> u64 {
+    m + n
+}
+
+fn mul(m: u64, n: u64) -> u64 {
+    m * n
+}
+
+fn common(input: &str, ops: &[&dyn Fn(u64, u64) -> u64]) -> Option<u64> {
     Some(
         input
             .lines()
@@ -12,14 +20,18 @@ pub fn part_one(input: &str) -> Option<u64> {
                 let first_num = first.parse().unwrap();
                 let mut it: Box<dyn Iterator<Item = u64>> = Box::new(std::iter::once(first_num));
                 for num_str in rest.split(' ') {
-                    let num = num_str.parse::<u64>().unwrap();
-                    it = Box::new(it.flat_map(move |n| [num + n, num * n]));
+                    let n = num_str.parse::<u64>().unwrap();
+                    it = Box::new(it.flat_map(move |m| ops.iter().map(move |&f| f(m, n))));
                 }
 
                 it.find(|&n| n == test)
             })
             .sum(),
     )
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    common(input, &[&add, &mul])
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
