@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 advent_of_code::solution!(8);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    let mut mat = Matrix::from(input);
+fn prepare(input: &str) -> (Matrix, HashMap<u8, Vec<(i32, i32)>>) {
+    let mat = Matrix::from(input);
 
     let mut antennas: HashMap<u8, Vec<(i32, i32)>> = HashMap::new();
     for i in 0..mat.rows as i32 {
@@ -19,20 +19,25 @@ pub fn part_one(input: &str) -> Option<u32> {
         }
     }
 
+    (mat, antennas)
+}
+
+fn build_antenna(mat: &mut Matrix, i: i32, j: i32) -> bool {
+    ![None, Some(b'#')].contains(&mat.get(i, j)) && {
+        mat[(i, j)] = b'#';
+        true
+    }
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (mut mat, antennas) = prepare(input);
     Some(
         antennas
             .iter()
             .map(|(_, v)| {
                 iproduct!(v, v)
                     .filter(|((i0, j0), (i1, j1))| {
-                        (i0, j0) != (i1, j1) && {
-                            let i2 = 2 * i1 - i0;
-                            let j2 = 2 * j1 - j0;
-                            ![None, Some(b'#')].contains(&mat.get(2 * i1 - i0, 2 * j1 - j0)) && {
-                                mat[(i2, j2)] = b'#';
-                                true
-                            }
-                        }
+                        (i0, j0) != (i1, j1) && build_antenna(&mut mat, 2 * i1 - i0, 2 * j1 - j0)
                     })
                     .count() as u32
             })
