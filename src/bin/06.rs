@@ -52,7 +52,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 mat1[(ii, jj)] == b'X' && (ii != i0 || jj != j0) && {
                     let mut mat = mat0.clone();
                     mat[(ii, jj)] = b'#';
-                    patrol(&mut mat, i0, j0) == None
+                    patrol(&mut mat, i0, j0).is_none()
                 }
             })
             .count() as u32,
