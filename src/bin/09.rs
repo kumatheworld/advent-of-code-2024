@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(9);
 
-pub fn part_one(input: &str) -> Option<u64> {
+fn common(input: &str, move_blocks: &dyn Fn(&mut Vec<Option<usize>>) -> ()) -> Option<u64> {
     let mut blocks = input
         .trim()
         .chars()
@@ -12,14 +12,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         })
         .collect_vec();
 
-    let mut i = 0;
-    while i < blocks.len() {
-        if blocks[i].is_none() {
-            let end = blocks.len() - 1;
-            blocks[i] = (i..end).filter_map(|_| blocks.pop().unwrap()).next()
-        }
-        i += 1;
-    }
+    move_blocks(&mut blocks);
 
     Some(
         blocks
@@ -28,6 +21,19 @@ pub fn part_one(input: &str) -> Option<u64> {
             .map(|(i, j)| i as u64 * j.unwrap_or_default() as u64)
             .sum(),
     )
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    common(input, &|blocks| {
+        let mut i = 0;
+        while i < blocks.len() {
+            if blocks[i].is_none() {
+                let end = blocks.len() - 1;
+                blocks[i] = (i..end).filter_map(|_| blocks.pop().unwrap()).next()
+            }
+            i += 1;
+        }
+    })
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
