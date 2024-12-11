@@ -1,7 +1,30 @@
+use itertools::Itertools;
+
 advent_of_code::solution!(9);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    None
+pub fn part_one(input: &str) -> Option<u64> {
+    let mut blocks = input
+        .trim()
+        .chars()
+        .enumerate()
+        .flat_map(|(i, c)| {
+            std::iter::repeat((i & 1 == 0).then_some(i >> 1)).take(c.to_digit(10).unwrap() as usize)
+        })
+        .collect_vec();
+
+    let mut sum = 0;
+    let mut i = 0;
+    while i < blocks.len() {
+        sum += i * blocks[i].unwrap_or_else(|| {
+            let end = blocks.len() - 1;
+            (i..end)
+                .filter_map(|_| blocks.pop().unwrap())
+                .next()
+                .unwrap_or_default()
+        });
+        i += 1;
+    }
+    Some(sum as u64)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
