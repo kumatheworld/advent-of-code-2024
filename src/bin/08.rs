@@ -1,6 +1,7 @@
 use advent_of_code::Matrix;
-use itertools::{iproduct, iterate};
+use itertools::{iproduct, iterate, Itertools};
 use std::collections::HashMap;
+
 advent_of_code::solution!(8);
 
 fn prepare(input: &str) -> (Matrix, HashMap<u8, Vec<(i32, i32)>>) {
@@ -21,47 +22,40 @@ fn prepare(input: &str) -> (Matrix, HashMap<u8, Vec<(i32, i32)>>) {
     (mat, antennas)
 }
 
-fn build_antenna(mat: &mut Matrix, i: i32, j: i32) -> bool {
-    ![None, Some(b'#')].contains(&mat.get(i, j)) && {
-        mat[(i, j)] = b'#';
-        true
-    }
-}
-
 pub fn part_one(input: &str) -> Option<u32> {
-    let (mut mat, antennas) = prepare(input);
+    let (mat, antennas) = prepare(input);
     Some(
         antennas
             .iter()
-            .map(|(_, v)| {
+            .flat_map(|(_, v)| {
                 iproduct!(v, v)
-                    .filter(|((i0, j0), (i1, j1))| {
-                        (i0, j0) != (i1, j1) && build_antenna(&mut mat, 2 * i1 - i0, 2 * j1 - j0)
+                    .filter(|(p, q)| p != q)
+                    .filter_map(|((i0, j0), (i1, j1))| {
+                        let i2 = 2 * i1 - i0;
+                        let j2 = 2 * j1 - j0;
+                        mat.get(i2, j2).is_some().then(|| (i2, j2))
                     })
-                    .count() as u32
             })
-            .sum(),
+            .unique()
+            .count() as u32,
     )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let (mut mat, antennas) = prepare(input);
-    let m = mat.rows as i32;
-    let n = mat.cols as i32;
+    let (mat, antennas) = prepare(input);
     Some(
         antennas
             .iter()
-            .map(|(_, v)| {
+            .flat_map(|(_, v)| {
                 iproduct!(v, v)
                     .filter(|(p, q)| p != q)
                     .flat_map(|(&(i0, j0), &(i1, j1))| {
                         iterate((i1, j1), move |&(i, j)| (i + i1 - i0, j + j1 - j0))
-                            .take_while(|&(i, j)| (0..m).contains(&i) && (0..n).contains(&j))
+                            .take_while(|&(i, j)| mat.get(i, j).is_some())
                     })
-                    .filter(|&(i, j)| build_antenna(&mut mat, i, j))
-                    .count() as u32
             })
-            .sum(),
+            .unique()
+            .count() as u32,
     )
 }
 
