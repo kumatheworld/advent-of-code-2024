@@ -12,19 +12,22 @@ pub fn part_one(input: &str) -> Option<u64> {
         })
         .collect_vec();
 
-    let mut sum = 0;
     let mut i = 0;
     while i < blocks.len() {
-        sum += i * blocks[i].unwrap_or_else(|| {
+        if blocks[i].is_none() {
             let end = blocks.len() - 1;
-            (i..end)
-                .filter_map(|_| blocks.pop().unwrap())
-                .next()
-                .unwrap_or_default()
-        });
+            blocks[i] = (i..end).filter_map(|_| blocks.pop().unwrap()).next()
+        }
         i += 1;
     }
-    Some(sum as u64)
+
+    Some(
+        blocks
+            .iter()
+            .enumerate()
+            .map(|(i, j)| i as u64 * j.unwrap_or_default() as u64)
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
