@@ -5,8 +5,10 @@ advent_of_code::solution!(1);
 fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
     input
         .lines()
-        .filter_map(|line| line.split_whitespace().next_tuple())
-        .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
+        .map(|line| {
+            let (m, n) = line.split_once("   ").unwrap();
+            (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap())
+        })
         .unzip()
 }
 
