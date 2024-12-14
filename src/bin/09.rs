@@ -37,7 +37,36 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    common(input, &|blocks| {
+        let (somes, mut nones): (Vec<_>, Vec<_>) = input
+            .trim()
+            .chars()
+            .map(|c| c.to_digit(10).unwrap())
+            .enumerate()
+            .partition(|(i, _)| i & 1 == 0);
+
+        let mut cumsum = somes
+            .iter()
+            .interleave(nones.iter())
+            .map(|&(_, a)| a)
+            .scan(0, |a, b| {
+                *a += b;
+                Some(*a as usize)
+            })
+            .collect_vec();
+
+        for &(i, some) in somes.iter().rev() {
+            if let Some(&(j, _)) = nones[..i / 2].iter().find(|&&(_, cap)| cap >= some) {
+                let left = cumsum[j - 1];
+                let right = cumsum[i - 1];
+                for k in 0..some as usize {
+                    blocks.swap(left + k, right + k);
+                }
+                cumsum[j - 1] += some as usize;
+                nones[j / 2].1 -= some;
+            }
+        }
+    })
 }
 
 #[cfg(test)]
