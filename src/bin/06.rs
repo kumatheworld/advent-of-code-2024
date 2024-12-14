@@ -36,13 +36,13 @@ fn patrol(mat: &mut Matrix, i0: i32, j0: i32) -> Option<u32> {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut mat = Matrix::from(input);
-    let (i0, j0) = mat.find(b'^').unwrap();
+    let (i0, j0) = mat.position(b'^').unwrap();
     patrol(&mut mat, i0, j0)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mat0 = Matrix::from(input);
-    let (i0, j0) = mat0.find(b'^').unwrap();
+    let (i0, j0) = mat0.position(b'^').unwrap();
     let mut mat1 = mat0.clone();
     patrol(&mut mat1, i0, j0);
 

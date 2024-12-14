@@ -30,7 +30,7 @@ impl Matrix {
             .then(|| self[(i, j)])
     }
 
-    pub fn find(&self, b: u8) -> Option<(i32, i32)> {
+    pub fn position(&self, b: u8) -> Option<(i32, i32)> {
         let index = self.matrix.iter().position(|&b_| b_ == b)?;
         Some(((index / self.cols) as i32, (index % self.cols) as i32))
     }
