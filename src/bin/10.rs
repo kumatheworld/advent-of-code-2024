@@ -35,7 +35,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    common(input, false)
 }
 
 #[cfg(test)]
