@@ -1,10 +1,10 @@
 advent_of_code::solution!(11);
 
-pub fn part_one(input: &str) -> Option<u64> {
+pub fn common(input: &str, reps: usize) -> Option<u64> {
     let mut buf: Box<dyn Iterator<Item = String>> =
         Box::new(input.trim().split(' ').map(|s| s.to_string()));
 
-    for _ in 0..25 {
+    for _ in 0..reps {
         buf = Box::new(buf.flat_map(|mut s| {
             s.drain(..s.find(|c| c != '0').unwrap_or(s.len()));
             if s.is_empty() {
@@ -19,6 +19,10 @@ pub fn part_one(input: &str) -> Option<u64> {
     }
 
     Some(buf.count() as u64)
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    common(input, 25)
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
