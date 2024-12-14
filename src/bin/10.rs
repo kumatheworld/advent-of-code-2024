@@ -3,7 +3,7 @@ use itertools::{iproduct, Itertools};
 
 advent_of_code::solution!(10);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn common(input: &str, apply_unique: bool) -> Option<u32> {
     static D: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let mat = Matrix::from(input);
     let zeros =
@@ -18,14 +18,20 @@ pub fn part_one(input: &str) -> Option<u32> {
                     let mat_ref = &mat;
                     buf = Box::new(
                         buf.flat_map(|(i, j)| D.map(|(di, dj)| (i + di, j + dj)))
-                            .filter(move |&(i, j)| mat_ref.get(i, j) == Some(level))
-                            .unique(),
+                            .filter(move |&(i, j)| mat_ref.get(i, j) == Some(level)),
                     );
+                    if apply_unique {
+                        buf = Box::new(buf.unique());
+                    }
                 }
                 buf.count() as u32
             })
             .sum(),
     )
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    common(input, true)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
