@@ -40,7 +40,7 @@ fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
 
         let mid = pages[num_next_pages
             .iter()
-            .position(|&i| i == pages.len() / 2)
+            .position(|&i| i == pages.len() >> 1)
             .unwrap()];
 
         if num_next_pages == (0..pages.len()).rev().collect_vec() {

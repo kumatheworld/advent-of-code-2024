@@ -56,14 +56,14 @@ pub fn part_two(input: &str) -> Option<u64> {
             .collect_vec();
 
         for &(i, some) in somes.iter().rev() {
-            if let Some(&(j, _)) = nones[..i / 2].iter().find(|&&(_, cap)| cap >= some) {
+            if let Some(&(j, _)) = nones[..i >> 1].iter().find(|&&(_, cap)| cap >= some) {
                 let left = cumsum[j - 1];
                 let right = cumsum[i - 1];
                 for k in 0..some as usize {
                     blocks.swap(left + k, right + k);
                 }
                 cumsum[j - 1] += some as usize;
-                nones[j / 2].1 -= some;
+                nones[j >> 1].1 -= some;
             }
         }
     })
