@@ -15,13 +15,21 @@ mod tests {
     #[test]
     fn test_part_one_1() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(772));
+        assert_eq!(result, Some(140));
     }
 
     #[test]
     fn test_part_one_2() {
         let result = part_one(&advent_of_code::template::read_file_part(
             "examples", DAY, 2,
+        ));
+        assert_eq!(result, Some(772));
+    }
+
+    #[test]
+    fn test_part_one_3() {
+        let result = part_one(&advent_of_code::template::read_file_part(
+            "examples", DAY, 3,
         ));
         assert_eq!(result, Some(1930));
     }
