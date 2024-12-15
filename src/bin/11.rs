@@ -95,7 +95,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    common(input, 75)
 }
 
 #[cfg(test)]
