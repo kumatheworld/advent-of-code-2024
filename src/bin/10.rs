@@ -4,7 +4,7 @@ use itertools::{iproduct, Itertools};
 advent_of_code::solution!(10);
 
 fn common(input: &str, apply_unique: bool) -> Option<u32> {
-    const D: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+    const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let mat = Matrix::from(input);
     let zeros =
         iproduct!(0..mat.rows as i32, 0..mat.cols as i32).filter(|&(i, j)| mat[(i, j)] == b'0');
@@ -17,7 +17,7 @@ fn common(input: &str, apply_unique: bool) -> Option<u32> {
                 for level in b'1'..=b'9' {
                     let mat_ref = &mat;
                     buf = Box::new(
-                        buf.flat_map(|(i, j)| D.map(|(di, dj)| (i + di, j + dj)))
+                        buf.flat_map(|(i, j)| DIJ.map(|(di, dj)| (i + di, j + dj)))
                             .filter(move |&(i, j)| mat_ref.get(i, j) == Some(level)),
                     );
                     if apply_unique {
