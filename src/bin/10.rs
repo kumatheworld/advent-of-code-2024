@@ -4,7 +4,7 @@ use itertools::{iproduct, Itertools};
 advent_of_code::solution!(10);
 
 fn common(input: &str, apply_unique: bool) -> Option<u32> {
-    static D: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+    const D: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let mat = Matrix::from(input);
     let zeros =
         iproduct!(0..mat.rows as i32, 0..mat.cols as i32).filter(|&(i, j)| mat[(i, j)] == b'0');

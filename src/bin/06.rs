@@ -4,8 +4,8 @@ use itertools::iproduct;
 advent_of_code::solution!(6);
 
 fn patrol(mat: &mut Matrix, i0: i32, j0: i32) -> Option<u32> {
-    static DI: [i32; 4] = [-1, 0, 1, 0];
-    static DJ: [i32; 4] = [0, 1, 0, -1];
+    const DI: [i32; 4] = [-1, 0, 1, 0];
+    const DJ: [i32; 4] = [0, 1, 0, -1];
     let mut d = 0;
     let mut i = i0;
     let mut j = j0;
