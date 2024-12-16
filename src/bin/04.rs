@@ -22,7 +22,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mat = Matrix::from(input);
-    let mmss = [
+    const MMSS: [[u8; 4]; 4] = [
         [b'M', b'M', b'S', b'S'],
         [b'M', b'S', b'M', b'S'],
         [b'S', b'M', b'S', b'M'],
@@ -32,7 +32,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         iproduct!(1..(mat.rows - 1) as i32, 1..(mat.cols - 1) as i32)
             .filter(|&(i, j)| {
                 mat[(i, j)] == b'A'
-                    && mmss.contains(&[
+                    && MMSS.contains(&[
                         mat[(i - 1, j - 1)],
                         mat[(i - 1, j + 1)],
                         mat[(i + 1, j - 1)],
