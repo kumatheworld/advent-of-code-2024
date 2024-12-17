@@ -26,6 +26,13 @@ impl<T> Matrix<T> {
     fn serialize(&self, i: i32, j: i32) -> usize {
         self.cols * i as usize + j as usize
     }
+
+    pub fn new_uniform<U: Clone>(&self, u: U) -> Matrix<U> {
+        let rows = self.rows;
+        let cols = self.cols;
+        let array = vec![u; rows * cols].into_boxed_slice();
+        Matrix { array, rows, cols }
+    }
 }
 
 impl<T: Copy> Matrix<T> {
