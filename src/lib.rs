@@ -3,7 +3,7 @@ pub mod template;
 // Use this file to add helper functions and additional modules.
 #[derive(Debug, Clone)]
 pub struct Matrix<T> {
-    matrix: Box<[T]>,
+    array: Box<[T]>,
     pub rows: usize,
     pub cols: usize,
 }
@@ -12,13 +12,13 @@ impl Matrix<u8> {
     pub fn from(input: &str) -> Self {
         let cols = input.find('\n').unwrap();
         let rows = (input.trim().len() + 1) / (cols + 1);
-        let matrix = input
+        let array = input
             .trim()
             .lines()
             .flat_map(|line| line.bytes())
             .collect::<Vec<_>>()
             .into_boxed_slice();
-        Matrix { matrix, rows, cols }
+        Matrix { array, rows, cols }
     }
 }
 
@@ -37,7 +37,7 @@ impl<T: Copy> Matrix<T> {
 
 impl<T: PartialEq> Matrix<T> {
     pub fn position(&self, b: T) -> Option<(i32, i32)> {
-        let index = self.matrix.iter().position(|b_| *b_ == b)?;
+        let index = self.array.iter().position(|b_| *b_ == b)?;
         Some(((index / self.cols) as i32, (index % self.cols) as i32))
     }
 }
@@ -46,12 +46,12 @@ impl<T> std::ops::Index<(i32, i32)> for Matrix<T> {
     type Output = T;
 
     fn index(&self, (i, j): (i32, i32)) -> &Self::Output {
-        &self.matrix[self.serialize(i, j)]
+        &self.array[self.serialize(i, j)]
     }
 }
 
 impl<T> std::ops::IndexMut<(i32, i32)> for Matrix<T> {
     fn index_mut(&mut self, (i, j): (i32, i32)) -> &mut Self::Output {
-        &mut self.matrix[self.serialize(i, j)]
+        &mut self.array[self.serialize(i, j)]
     }
 }
