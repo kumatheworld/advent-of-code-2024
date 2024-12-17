@@ -1,13 +1,12 @@
 use advent_of_code::Matrix;
-use itertools::{iproduct, Itertools};
+use itertools::Itertools;
 
 advent_of_code::solution!(10);
 
 fn common(input: &str, apply_unique: bool) -> Option<u32> {
     const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let mat = Matrix::from(input);
-    let zeros =
-        iproduct!(0..mat.rows as i32, 0..mat.cols as i32).filter(|&(i, j)| mat[(i, j)] == b'0');
+    let zeros = mat.indices().filter(|&(i, j)| mat[(i, j)] == b'0');
 
     Some(
         zeros

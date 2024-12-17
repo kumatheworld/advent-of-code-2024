@@ -7,7 +7,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let mat = Matrix::from(input);
     Some(
         iproduct!(
-            iproduct!(0..mat.rows as i32, 0..mat.cols as i32).filter(|&(i, j)| mat[(i, j)] == b'X'),
+            mat.indices().filter(|&(i, j)| mat[(i, j)] == b'X'),
             iproduct!(-1..=1, -1..=1).filter(|&(di, dj)| di != 0 || dj != 0)
         )
         .filter(|&((i, j), (di, dj))| {

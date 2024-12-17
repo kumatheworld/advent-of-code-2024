@@ -10,14 +10,12 @@ where
 {
     let mat = Matrix::from(input);
     let mut antennas: HashMap<u8, Vec<(i32, i32)>> = HashMap::new();
-    for i in 0..mat.rows as i32 {
-        for j in 0..mat.cols as i32 {
-            if mat[(i, j)] != b'.' {
-                antennas
-                    .entry(mat[(i, j)])
-                    .or_insert_with(Vec::new)
-                    .push((i, j));
-            }
+    for (i, j) in mat.indices() {
+        if mat[(i, j)] != b'.' {
+            antennas
+                .entry(mat[(i, j)])
+                .or_insert_with(Vec::new)
+                .push((i, j));
         }
     }
 
