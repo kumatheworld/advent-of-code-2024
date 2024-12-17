@@ -3,7 +3,7 @@ use itertools::iproduct;
 
 advent_of_code::solution!(6);
 
-fn patrol(mat: &mut Matrix, i0: i32, j0: i32) -> Option<u32> {
+fn patrol(mat: &mut Matrix<u8>, i0: i32, j0: i32) -> Option<u32> {
     const DI: [i32; 4] = [-1, 0, 1, 0];
     const DJ: [i32; 4] = [0, 1, 0, -1];
     let mut d = 0;

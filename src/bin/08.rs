@@ -6,7 +6,7 @@ advent_of_code::solution!(8);
 
 fn common<F>(input: &str, yield_antennas: F) -> Option<u32>
 where
-    F: Fn((i32, i32), (i32, i32), &Matrix) -> Box<dyn Iterator<Item = (i32, i32)> + '_>,
+    F: Fn((i32, i32), (i32, i32), &Matrix<u8>) -> Box<dyn Iterator<Item = (i32, i32)> + '_>,
 {
     let mat = Matrix::from(input);
     let mut antennas: HashMap<u8, Vec<(i32, i32)>> = HashMap::new();
