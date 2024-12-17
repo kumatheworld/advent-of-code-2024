@@ -1,6 +1,9 @@
 pub mod template;
 
 // Use this file to add helper functions and additional modules.
+
+use itertools::iproduct;
+
 #[derive(Debug, Clone)]
 pub struct Matrix<T> {
     array: Box<[T]>,
@@ -25,6 +28,10 @@ impl Matrix<u8> {
 impl<T> Matrix<T> {
     fn serialize(&self, i: i32, j: i32) -> usize {
         self.cols * i as usize + j as usize
+    }
+
+    pub fn indices(&self) -> impl Iterator<Item = (i32, i32)> {
+        iproduct!(0..self.rows as i32, 0..self.cols as i32)
     }
 
     pub fn new_uniform<U: Clone>(&self, u: U) -> Matrix<U> {
