@@ -71,8 +71,40 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {
+    fn test_part_two_1() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(80));
+    }
+
+    #[test]
+    fn test_part_two_2() {
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 2,
+        ));
+        assert_eq!(result, Some(436));
+    }
+
+    #[test]
+    fn test_part_two_3() {
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 3,
+        ));
+        assert_eq!(result, Some(1206));
+    }
+
+    #[test]
+    fn test_part_two_4() {
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 4,
+        ));
+        assert_eq!(result, Some(236));
+    }
+
+    #[test]
+    fn test_part_two_5() {
+        let result = part_two(&advent_of_code::template::read_file_part(
+            "examples", DAY, 5,
+        ));
+        assert_eq!(result, Some(368));
     }
 }
