@@ -7,18 +7,16 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
     const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
     let mat = Matrix::from(input);
-    let mut seen = mat.new_uniform(false);
+    let mut groups = mat.new_uniform(None);
 
     let mut sum = 0;
+    let mut gid = 0;
     for (i, j) in mat.indices() {
-        if seen[(i, j)] {
+        if groups[(i, j)].is_some() {
             continue;
         }
 
-        let mut connected = mat.new_uniform(false);
-        connected[(i, j)] = true;
-        seen[(i, j)] = true;
-
+        groups[(i, j)] = Some(gid);
         let mut stack = vec![(i, j)];
         let mut area = 1;
         let mut perimeter = 4;
@@ -29,11 +27,10 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                 (mat.get(ii + di, jj + dj) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
             });
             for (iii, jjj) in indices {
-                if seen[(iii, jjj)] {
+                if groups[(iii, jjj)].is_some() {
                     perimeter -= 1;
                 } else {
-                    seen[(iii, jjj)] = true;
-                    connected[(iii, jjj)] = true;
+                    groups[(iii, jjj)] = Some(gid);
                     area += 1;
                     perimeter += 3;
                     stack.push((iii, jjj));
@@ -45,15 +42,13 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
             * if use_perimeter {
                 perimeter
             } else {
-                let connected = &connected;
+                let g = &groups;
                 (0..=mat.rows as i32)
                     .flat_map(|i| {
                         (0..mat.cols as i32)
                             .map(move |j| {
-                                connected
-                                    .get(i - 1, j)
-                                    .or(Some(false))
-                                    .cmp(&connected.get(i, j).or(Some(false)))
+                                (g.get(i - 1, j) == Some(Some(gid)))
+                                    .cmp(&(g.get(i, j) == Some(Some(gid))))
                             })
                             .dedup()
                     })
@@ -63,16 +58,16 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                         .flat_map(|j| {
                             (0..mat.rows as i32)
                                 .map(move |i| {
-                                    connected
-                                        .get(i, j - 1)
-                                        .or(Some(false))
-                                        .cmp(&connected.get(i, j).or(Some(false)))
+                                    (g.get(i, j - 1) == Some(Some(gid)))
+                                        .cmp(&(g.get(i, j) == Some(Some(gid))))
                                 })
                                 .dedup()
                         })
                         .filter(|&o| o.is_ne())
                         .count() as u32
-            }
+            };
+
+        gid += 1;
     }
 
     Some(sum)
