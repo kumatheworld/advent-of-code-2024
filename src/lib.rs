@@ -12,13 +12,32 @@ pub struct Matrix<T> {
     pub cols: usize,
 }
 
-impl fmt::Display for Matrix<u8> {
+trait AsSymbol {
+    fn as_symbol(&self) -> char;
+}
+
+impl AsSymbol for u8 {
+    fn as_symbol(&self) -> char {
+        *self as char
+    }
+}
+
+impl AsSymbol for bool {
+    fn as_symbol(&self) -> char {
+        if *self {
+            '*'
+        } else {
+            ' '
+        }
+    }
+}
+
+impl<T: AsSymbol> fmt::Display for Matrix<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut index = 0;
-        for _ in 0..self.rows as i32 {
-            for _ in 0..self.cols as i32 {
-                write!(f, "{}", self.array[index] as char)?;
-                index += 1;
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                let index = row * self.cols + col;
+                write!(f, "{}", self.array[index].as_symbol())?;
             }
             writeln!(f)?;
         }
