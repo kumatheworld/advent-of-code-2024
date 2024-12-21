@@ -4,7 +4,7 @@ pub mod template;
 
 use itertools::iproduct;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Matrix<T> {
     array: Box<[T]>,
     pub rows: usize,
