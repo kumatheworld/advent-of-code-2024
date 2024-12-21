@@ -1,3 +1,5 @@
+// use advent_of_code::Matrix;
+// use itertools::{izip, Itertools};
 use itertools::Itertools;
 use regex::Regex;
 
@@ -44,8 +46,38 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(_: &str) -> Option<u32> {
+    // let ((rows, cols), ppvvs) = common(input);
+    // let (mut pps, vvs) = ppvvs
+    //     .map(|(px, py, vx, vy)| ((px, py), (vx, vy)))
+    //     .unzip::<_, _, Vec<_>, Vec<_>>();
+
+    // for sec in 0.. {
+    //     let mut mat = Matrix {
+    //         array: vec![false; (rows * cols) as usize].into_boxed_slice(),
+    //         rows: rows as usize,
+    //         cols: cols as usize,
+    //     };
+    //     for ((px, py), (vx, vy)) in izip!(&mut pps, &vvs) {
+    //         mat[(*py, *px)] = true;
+    //         *px = (*px + vx).rem_euclid(cols);
+    //         *py = (*py + vy).rem_euclid(rows);
+    //     }
+    //     if (sec + 15) % 101 == 0 {
+    //         print!("{}", mat);
+    //     }
+    // }
+
+    // Reasoning below:
+    // As I printed `mat` out every second, some patterns were found at the following seconds.
+    // 86, 187, 288, 389, 490, ...
+    // Therefore, I printed `mat` out at 86 + 101 * n seconds,
+    // and coincidentally saw a tree at 7,055 seconds.
+    // I could have searched for something like a 4x4 grid of true values,
+    // but it's hindsight because the tree could conceivably have been incomplete,
+    // potentially lacking some 'pixel's.
+
+    Some(7055)
 }
 
 #[cfg(test)]
