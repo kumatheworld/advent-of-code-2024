@@ -3,12 +3,27 @@ pub mod template;
 // Use this file to add helper functions and additional modules.
 
 use itertools::iproduct;
+use std::fmt;
 
 #[derive(Clone)]
 pub struct Matrix<T> {
     array: Box<[T]>,
     pub rows: usize,
     pub cols: usize,
+}
+
+impl fmt::Display for Matrix<u8> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut index = 0;
+        for _ in 0..self.rows as i32 {
+            for _ in 0..self.cols as i32 {
+                write!(f, "{}", self.array[index] as char)?;
+                index += 1;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
 }
 
 impl Matrix<u8> {
