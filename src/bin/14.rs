@@ -5,9 +5,10 @@ advent_of_code::solution!(14);
 
 pub fn part_one(input: &str) -> Option<u32> {
     const SECONDS: i32 = 100;
+    const BOUNDARY: usize = 1000;
     let re = Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)$").unwrap();
 
-    let (rows, cols) = if input.len() < 1000 {
+    let (rows, cols) = if input.len() < BOUNDARY {
         (7, 11)
     } else {
         (103, 101)
