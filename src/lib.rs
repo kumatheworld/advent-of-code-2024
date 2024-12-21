@@ -7,7 +7,7 @@ use std::fmt;
 
 #[derive(Clone)]
 pub struct Matrix<T> {
-    array: Box<[T]>,
+    pub array: Box<[T]>,
     pub rows: usize,
     pub cols: usize,
 }
