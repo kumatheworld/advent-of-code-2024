@@ -46,10 +46,10 @@ fn push_line(
 ) -> (i32, i32) {
     let mut k = 1;
     loop {
-        match mat.get(i + k * di, j + k * dj) {
-            Some(b'.') => break,
-            Some(b) if box_bytes.contains(&b) => (),
-            Some(b'#') => return (i, j),
+        match mat[(i + k * di, j + k * dj)] {
+            b'.' => break,
+            b if box_bytes.contains(&b) => (),
+            b'#' => return (i, j),
             _ => panic!(),
         }
         k += 1;
