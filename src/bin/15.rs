@@ -1,6 +1,7 @@
 use core::panic;
 
 use advent_of_code::Matrix;
+use itertools::Itertools;
 
 advent_of_code::solution!(15);
 
@@ -55,7 +56,10 @@ fn push_line(
         k += 1;
     }
 
-    mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
+    for (k0, k1) in (1..=k).rev().tuple_windows() {
+        mat.swap((i + k0 * di, j + k0 * dj), (i + k1 * di, j + k1 * dj));
+    }
+
     (i + di, j + dj)
 }
 
