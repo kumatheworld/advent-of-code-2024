@@ -7,8 +7,8 @@ advent_of_code::solution!(15);
 fn common(
     input: &str,
     load_txt: fn(&str) -> Matrix<u8>,
-    push: fn(&mut Matrix<u8>, (i32, i32), (i32, i32)) -> (i32, i32),
-    box_byte: u8,
+    push: fn(&mut Matrix<u8>, (i32, i32), (i32, i32), &Vec<u8>) -> (i32, i32),
+    box_bytes: Vec<u8>,
 ) -> Option<u32> {
     const MULTIPLIER: i32 = 100;
 
@@ -28,12 +28,12 @@ fn common(
     });
 
     for dij in directions {
-        ij = push(&mut mat, ij, dij);
+        ij = push(&mut mat, ij, dij, &box_bytes);
     }
 
     Some(
         mat.indices()
-            .filter_map(|(i, j)| (mat[(i, j)] == box_byte).then(|| (MULTIPLIER * i + j) as u32))
+            .filter_map(|(i, j)| (mat[(i, j)] == box_bytes[0]).then(|| (MULTIPLIER * i + j) as u32))
             .sum(),
     )
 }
@@ -42,12 +42,12 @@ pub fn part_one(input: &str) -> Option<u32> {
     common(
         input,
         Matrix::from,
-        |mat, (i, j), (di, dj)| {
+        |mat, (i, j), (di, dj), box_bytes| {
             let mut k = 1;
             loop {
                 match mat.get(i + k * di, j + k * dj) {
                     Some(b'.') => break,
-                    Some(b'O') => (),
+                    Some(b) if box_bytes.contains(&b) => (),
                     Some(b'#') => return (i, j),
                     _ => panic!(),
                 }
@@ -57,7 +57,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
             (i + di, j + dj)
         },
-        b'O',
+        vec![b'O'],
     )
 }
 
