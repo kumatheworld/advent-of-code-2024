@@ -12,7 +12,7 @@ fn cat(m: u64, n: u64) -> u64 {
     (m.to_string() + &n.to_string()).parse().unwrap()
 }
 
-fn common(input: &str, ops: &[&dyn Fn(u64, u64) -> u64]) -> Option<u64> {
+fn common(input: &str, ops: &[fn(u64, u64) -> u64]) -> Option<u64> {
     Some(
         input
             .lines()
@@ -35,11 +35,11 @@ fn common(input: &str, ops: &[&dyn Fn(u64, u64) -> u64]) -> Option<u64> {
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
-    common(input, &[&add, &mul])
+    common(input, &[add, mul])
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    common(input, &[&add, &mul, &cat])
+    common(input, &[add, mul, cat])
 }
 
 #[cfg(test)]

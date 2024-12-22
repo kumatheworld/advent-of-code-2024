@@ -6,8 +6,8 @@ advent_of_code::solution!(15);
 
 fn common(
     input: &str,
-    load_txt: &dyn Fn(&str) -> Matrix<u8>,
-    push: &dyn Fn(&mut Matrix<u8>, (i32, i32), (i32, i32)) -> (i32, i32),
+    load_txt: fn(&str) -> Matrix<u8>,
+    push: fn(&mut Matrix<u8>, (i32, i32), (i32, i32)) -> (i32, i32),
     box_byte: u8,
 ) -> Option<u32> {
     const MULTIPLIER: i32 = 100;
@@ -41,8 +41,8 @@ fn common(
 pub fn part_one(input: &str) -> Option<u32> {
     common(
         input,
-        &Matrix::from,
-        &|mat, (i, j), (di, dj)| {
+        Matrix::from,
+        |mat, (i, j), (di, dj)| {
             let mut k = 1;
             loop {
                 match mat.get(i + k * di, j + k * dj) {
