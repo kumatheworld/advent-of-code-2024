@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(9);
 
-fn common(input: &str, move_blocks: fn(&str, &mut Vec<Option<usize>>) -> ()) -> Option<u64> {
+fn common(input: &str, move_blocks: fn(&str, &mut Vec<Option<usize>>)) -> Option<u64> {
     let mut blocks = input
         .trim()
         .chars()
