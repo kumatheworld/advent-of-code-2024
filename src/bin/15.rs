@@ -38,27 +38,29 @@ fn common(
     )
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
-    common(
-        input,
-        Matrix::from,
-        |mat, (i, j), (di, dj), box_bytes| {
-            let mut k = 1;
-            loop {
-                match mat.get(i + k * di, j + k * dj) {
-                    Some(b'.') => break,
-                    Some(b) if box_bytes.contains(&b) => (),
-                    Some(b'#') => return (i, j),
-                    _ => panic!(),
-                }
-                k += 1;
-            }
+fn push_line(
+    mat: &mut Matrix<u8>,
+    (i, j): (i32, i32),
+    (di, dj): (i32, i32),
+    box_bytes: &Vec<u8>,
+) -> (i32, i32) {
+    let mut k = 1;
+    loop {
+        match mat.get(i + k * di, j + k * dj) {
+            Some(b'.') => break,
+            Some(b) if box_bytes.contains(&b) => (),
+            Some(b'#') => return (i, j),
+            _ => panic!(),
+        }
+        k += 1;
+    }
 
-            mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
-            (i + di, j + dj)
-        },
-        vec![b'O'],
-    )
+    mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
+    (i + di, j + dj)
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    common(input, Matrix::from, push_line, vec![b'O'])
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
