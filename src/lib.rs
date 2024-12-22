@@ -74,6 +74,12 @@ impl<T> Matrix<T> {
         let array = vec![u; rows * cols].into_boxed_slice();
         Matrix { array, rows, cols }
     }
+
+    pub fn swap(&mut self, (i0, j0): (i32, i32), (i1, j1): (i32, i32)) {
+        let index1 = self.serialize(i0, j0);
+        let index2 = self.serialize(i1, j1);
+        self.array.swap(index1, index2);
+    }
 }
 
 impl<T: Copy> Matrix<T> {
