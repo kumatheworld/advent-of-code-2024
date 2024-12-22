@@ -4,14 +4,19 @@ use advent_of_code::Matrix;
 
 advent_of_code::solution!(15);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn common(
+    input: &str,
+    load_txt: &dyn Fn(&str) -> Matrix<u8>,
+    push: &dyn Fn(&mut Matrix<u8>, (i32, i32), (i32, i32)) -> (i32, i32),
+    box_byte: u8,
+) -> Option<u32> {
     const MULTIPLIER: i32 = 100;
 
     let (warehouse, directions) = input.split_once("\n\n").unwrap();
 
-    let mut mat = Matrix::from(warehouse);
-    let (mut i, mut j) = mat.position(b'@').unwrap();
-    mat[(i, j)] = b'.';
+    let mut mat = load_txt(warehouse);
+    let mut ij = mat.position(b'@').unwrap();
+    mat[ij] = b'.';
 
     let directions = directions.chars().filter_map(|c| match c {
         '^' => Some((-1, 0)),
@@ -22,27 +27,37 @@ pub fn part_one(input: &str) -> Option<u32> {
         _ => panic!(),
     });
 
-    'outer: for (di, dj) in directions {
-        let mut k = 1;
-        loop {
-            match mat.get(i + k * di, j + k * dj) {
-                Some(b'.') => break,
-                Some(b'O') => (),
-                Some(b'#') => continue 'outer,
-                _ => panic!(),
-            }
-            k += 1;
-        }
-
-        mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
-        i = i + di;
-        j = j + dj;
+    for dij in directions {
+        ij = push(&mut mat, ij, dij);
     }
 
     Some(
         mat.indices()
-            .filter_map(|(i, j)| (mat[(i, j)] == b'O').then(|| (MULTIPLIER * i + j) as u32))
+            .filter_map(|(i, j)| (mat[(i, j)] == box_byte).then(|| (MULTIPLIER * i + j) as u32))
             .sum(),
+    )
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    common(
+        input,
+        &Matrix::from,
+        &|mat, (i, j), (di, dj)| {
+            let mut k = 1;
+            loop {
+                match mat.get(i + k * di, j + k * dj) {
+                    Some(b'.') => break,
+                    Some(b'O') => (),
+                    Some(b'#') => return (i, j),
+                    _ => panic!(),
+                }
+                k += 1;
+            }
+
+            mat.swap((i + di, j + dj), (i + k * di, j + k * dj));
+            (i + di, j + dj)
+        },
+        b'O',
     )
 }
 
