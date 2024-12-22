@@ -1,5 +1,4 @@
 // use advent_of_code::Matrix;
-// use itertools::{izip, Itertools};
 use itertools::Itertools;
 use regex::Regex;
 
@@ -58,7 +57,7 @@ pub fn part_two(_: &str) -> Option<u32> {
     //         rows: rows as usize,
     //         cols: cols as usize,
     //     };
-    //     for ((px, py), (vx, vy)) in izip!(&mut pps, &vvs) {
+    //     for ((px, py), (vx, vy)) in pps.iter_mut().zip(&vvs) {
     //         mat[(*py, *px)] = true;
     //         *px = (*px + vx).rem_euclid(cols);
     //         *py = (*py + vy).rem_euclid(rows);
