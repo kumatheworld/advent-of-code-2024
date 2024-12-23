@@ -17,7 +17,6 @@ fn common(
 
     let mut mat = load_txt(warehouse);
     let mut ij = mat.position(b'@').unwrap();
-    mat[ij] = b'.';
 
     let directions = directions.chars().filter_map(|c| match c {
         '^' => Some((-1, 0)),
@@ -56,7 +55,7 @@ fn push_line(
         k += 1;
     }
 
-    for (k0, k1) in (1..=k).rev().tuple_windows() {
+    for (k0, k1) in (0..=k).rev().tuple_windows() {
         mat.swap((i + k0 * di, j + k0 * dj), (i + k1 * di, j + k1 * dj));
     }
 
