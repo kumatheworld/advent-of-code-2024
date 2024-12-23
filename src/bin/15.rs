@@ -67,7 +67,67 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    common(
+        input,
+        |warehouse| {
+            let array = warehouse
+                .chars()
+                .filter_map(|b| match b {
+                    '#' => Some(vec![b'#', b'#']),
+                    'O' => Some(vec![b'[', b']']),
+                    '.' => Some(vec![b'.', b'.']),
+                    '@' => Some(vec![b'@', b'.']),
+                    '\n' => None,
+                    _ => panic!(),
+                })
+                .flatten()
+                .collect_vec()
+                .into_boxed_slice();
+            let rows = warehouse.lines().count();
+            let cols = array.len() / rows;
+            Matrix { array, rows, cols }
+        },
+        |mat, (i, j), (di, dj), box_bytes| {
+            if di == 0 {
+                push_line(mat, (i, j), (di, dj), box_bytes)
+            } else {
+                let mut jss = vec![];
+                let mut k = 1;
+
+                let mut js = vec![j];
+                while !js.is_empty() {
+                    jss.push(js.clone());
+                    let mut js2 = vec![];
+                    for &jj in js.iter() {
+                        match mat.get(i + k * di, jj) {
+                            Some(b'.') => (),
+                            Some(b'[') => js2.extend([jj, jj + 1].iter()),
+                            Some(b']') => {
+                                if js2.last() != Some(&jj) {
+                                    js2.extend([jj - 1, jj].iter())
+                                }
+                            }
+                            Some(b'#') => return (i, j),
+                            _ => panic!(),
+                        }
+                    }
+                    js = js2;
+                    k += 1;
+                }
+
+                let mut ii = i + k * di;
+                for js in jss.iter().rev() {
+                    ii -= di;
+                    for &jj in js {
+                        mat.swap((ii - di, jj), (ii, jj));
+                    }
+                }
+
+                (ii, j)
+            }
+        },
+        vec![b'[', b']'],
+    )
 }
 
 #[cfg(test)]
