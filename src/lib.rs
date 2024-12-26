@@ -60,7 +60,7 @@ impl Matrix<u8> {
 }
 
 impl<T> Matrix<T> {
-    fn serialize(&self, i: i32, j: i32) -> usize {
+    fn serialize(&self, (i, j): (i32, i32)) -> usize {
         self.cols * i as usize + j as usize
     }
 
@@ -75,9 +75,9 @@ impl<T> Matrix<T> {
         Matrix { array, rows, cols }
     }
 
-    pub fn swap(&mut self, (i0, j0): (i32, i32), (i1, j1): (i32, i32)) {
-        let index1 = self.serialize(i0, j0);
-        let index2 = self.serialize(i1, j1);
+    pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
+        let index1 = self.serialize(ij0);
+        let index2 = self.serialize(ij1);
         self.array.swap(index1, index2);
     }
 }
@@ -99,13 +99,13 @@ impl<T: PartialEq> Matrix<T> {
 impl<T> std::ops::Index<(i32, i32)> for Matrix<T> {
     type Output = T;
 
-    fn index(&self, (i, j): (i32, i32)) -> &Self::Output {
-        &self.array[self.serialize(i, j)]
+    fn index(&self, ij: (i32, i32)) -> &Self::Output {
+        &self.array[self.serialize(ij)]
     }
 }
 
 impl<T> std::ops::IndexMut<(i32, i32)> for Matrix<T> {
-    fn index_mut(&mut self, (i, j): (i32, i32)) -> &mut Self::Output {
-        &mut self.array[self.serialize(i, j)]
+    fn index_mut(&mut self, ij: (i32, i32)) -> &mut Self::Output {
+        &mut self.array[self.serialize(ij)]
     }
 }
