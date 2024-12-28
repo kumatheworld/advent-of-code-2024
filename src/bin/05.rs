@@ -6,16 +6,17 @@ advent_of_code::solution!(5);
 fn common(input: &str) -> impl Iterator<Item = Result<u32, u32>> + '_ {
     let (rules, updates) = input.split_once("\n\n").unwrap();
 
-    let rules = rules.lines().map(|line| {
-        line.split_once('|')
-            .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
-            .unwrap()
-    });
-
     let mut one2many: HashMap<u32, HashSet<u32>> = HashMap::new();
-    for (m, n) in rules {
-        one2many.entry(m).or_insert_with(HashSet::new).insert(n);
-    }
+    rules
+        .lines()
+        .map(|line| {
+            line.split_once('|')
+                .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
+                .unwrap()
+        })
+        .for_each(|(m, n)| {
+            one2many.entry(m).or_insert_with(HashSet::new).insert(n);
+        });
 
     updates.lines().map(move |line| {
         let pages = line

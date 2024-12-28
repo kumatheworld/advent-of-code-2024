@@ -23,19 +23,20 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
 
         while !stack.is_empty() {
             let (ii, jj) = stack.pop().unwrap();
-            let indices = DIJ.iter().filter_map(|&(di, dj)| {
-                (mat.get(ii + di, jj + dj) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
-            });
-            for (iii, jjj) in indices {
-                if groups[(iii, jjj)].is_some() {
-                    perimeter -= 1;
-                } else {
-                    groups[(iii, jjj)] = Some(gid);
-                    area += 1;
-                    perimeter += 3;
-                    stack.push((iii, jjj));
-                }
-            }
+            DIJ.iter()
+                .filter_map(|&(di, dj)| {
+                    (mat.get(ii + di, jj + dj) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
+                })
+                .for_each(|(iii, jjj)| {
+                    if groups[(iii, jjj)].is_some() {
+                        perimeter -= 1;
+                    } else {
+                        groups[(iii, jjj)] = Some(gid);
+                        area += 1;
+                        perimeter += 3;
+                        stack.push((iii, jjj));
+                    }
+                });
         }
 
         sum += area
