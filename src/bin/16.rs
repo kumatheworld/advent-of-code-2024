@@ -1,7 +1,7 @@
+use std::collections::HashMap;
+
 use advent_of_code::Matrix;
 use itertools::{iproduct, Itertools};
-use petgraph::algo::dijkstra;
-use petgraph::graph::UnGraph;
 
 advent_of_code::solution!(16);
 
@@ -12,8 +12,8 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     let mat = Matrix::from(input);
     let bottom = mat.rows as i32 - 2;
-    let start = mat.serialize((bottom, 1)) as u32;
-    let end = mat.serialize((1, mat.cols as i32 - 2)) as u32;
+    let start = (bottom, 1);
+    let end = (1, mat.cols as i32 - 2);
 
     let nodes = iproduct!(0..mat.rows as i32 - 1, 0..mat.cols as i32 - 1)
         .filter(|&(i, j)| {
@@ -26,36 +26,55 @@ pub fn part_one(input: &str) -> Option<u32> {
             }
         })
         .collect_vec();
-    let edges = nodes
+    let edges: HashMap<(i32, i32), Vec<((i32, i32), u32)>> = nodes
         .iter()
-        .flat_map(|&(i, j)| {
+        .map(|&(i, j)| {
             let mat_ref = &mat;
-            nodes.iter().filter_map(move |&(ii, jj)| {
-                let connected = ii == i && {
-                    (std::cmp::min(j, jj) + 1..std::cmp::max(j, jj))
-                        .all(|jjj| mat_ref[(i, jjj)] == b'.')
-                } || jj == j && {
-                    (std::cmp::min(i, ii) + 1..std::cmp::max(i, ii))
-                        .all(|iii| mat_ref[(iii, j)] == b'.')
-                };
-                connected.then(|| {
-                    (
-                        (i, j),
-                        (ii, jj),
-                        (TURN_PENALTY
-                            * !(i == bottom && ii == bottom && [j, jj].contains(&1)) as u32
-                            + i.abs_diff(ii)
-                            + j.abs_diff(jj)),
-                    )
+            let v = nodes
+                .iter()
+                .filter_map(move |&(ii, jj)| {
+                    let connected = ii == i && {
+                        (std::cmp::min(j, jj) + 1..std::cmp::max(j, jj))
+                            .all(|jjj| mat_ref[(i, jjj)] == b'.')
+                    } || jj == j && {
+                        (std::cmp::min(i, ii) + 1..std::cmp::max(i, ii))
+                            .all(|iii| mat_ref[(iii, j)] == b'.')
+                    };
+                    connected.then(|| {
+                        (
+                            (ii, jj),
+                            (TURN_PENALTY
+                                * !(i == bottom && ii == bottom && [j, jj].contains(&1)) as u32
+                                + i.abs_diff(ii)
+                                + j.abs_diff(jj)),
+                        )
+                    })
                 })
-            })
+                .collect_vec();
+            ((i, j), v)
         })
-        .map(|(ij0, ij1, w)| (mat.serialize(ij0) as u32, mat.serialize(ij1) as u32, w));
-    let g = UnGraph::<u32, u32>::from_edges(edges);
+        .collect();
 
-    dijkstra(&g, start.into(), Some(end.into()), |e| *e.weight())
-        .get(&end.into())
-        .map(|&s| s)
+    // Dijkstra
+    let mut dp: HashMap<(i32, i32), (bool, u32)> = nodes
+        .iter()
+        .map(|&ij| (ij, (false, if ij == start { 0 } else { u32::MAX })))
+        .collect();
+    loop {
+        let (&u, &(_, d)) = dp
+            .iter()
+            .filter(|(_, (b, _))| !b)
+            .min_by_key(|(_, (_, d))| d)
+            .unwrap();
+        if u == end {
+            return Some(d as u32);
+        }
+        dp.insert(u, (true, d));
+        for &(v, weight) in edges[&u].iter() {
+            let (_, dd) = dp.get_mut(&v)?;
+            *dd = std::cmp::min(*dd, d + weight);
+        }
+    }
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
