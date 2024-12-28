@@ -70,7 +70,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         }
         dp.insert(u, (true, d));
         for &(v, weight) in edges[&u].iter() {
-            let (_, dd) = dp.get_mut(&v)?;
+            let (_, dd) = dp.get_mut(&v).unwrap();
             *dd = std::cmp::min(*dd, d + weight);
         }
     }
