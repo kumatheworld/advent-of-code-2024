@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use advent_of_code::Matrix;
 use itertools::{iproduct, Itertools};
+use std::collections::HashMap;
 
 advent_of_code::solution!(16);
 
