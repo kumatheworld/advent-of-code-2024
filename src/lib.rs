@@ -60,7 +60,7 @@ impl Matrix<u8> {
 }
 
 impl<T> Matrix<T> {
-    pub fn serialize(&self, (i, j): (i32, i32)) -> usize {
+    fn serialize(&self, (i, j): (i32, i32)) -> usize {
         self.cols * i as usize + j as usize
     }
 
