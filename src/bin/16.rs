@@ -1,10 +1,21 @@
 use advent_of_code::Matrix;
 use itertools::{iproduct, Itertools};
+use std::cmp::Ordering;
 use std::collections::HashMap;
 
 advent_of_code::solution!(16);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn between(a: i32, b: i32) -> std::ops::Range<i32> {
+    std::cmp::min(a, b) + 1..std::cmp::max(a, b)
+}
+
+fn common(
+    input: &str,
+) -> (
+    (i32, i32),
+    Matrix<u8>,
+    HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
+) {
     const TURN_PENALTY: u32 = 1000;
     const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let linear = [vec![DIJ[0], DIJ[2]], vec![DIJ[1], DIJ[3]]];
@@ -32,14 +43,10 @@ pub fn part_one(input: &str) -> Option<u32> {
             let v = nodes
                 .iter()
                 .filter_map(move |&(ii, jj)| {
-                    let connected = ii == i && {
-                        (std::cmp::min(j, jj) + 1..std::cmp::max(j, jj))
-                            .all(|jjj| mat_ref[(i, jjj)] == b'.')
-                    } || jj == j && {
-                        (std::cmp::min(i, ii) + 1..std::cmp::max(i, ii))
-                            .all(|iii| mat_ref[(iii, j)] == b'.')
-                    };
-                    connected.then(|| {
+                    ((i != ii || j != jj)
+                        && (i == ii && between(j, jj).all(|jjj| mat_ref[(i, jjj)] == b'.')
+                            || j == jj && between(i, ii).all(|iii| mat_ref[(iii, j)] == b'.')))
+                    .then(|| {
                         (
                             (ii, jj),
                             (TURN_PENALTY
@@ -55,25 +62,40 @@ pub fn part_one(input: &str) -> Option<u32> {
         .collect();
 
     // Dijkstra
-    let mut dp: HashMap<(i32, i32), (bool, u32)> = nodes
+    // (visited, distance, possible previous nodes that give the shortest path)
+    let mut dp: HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)> = nodes
         .iter()
-        .map(|&ij| (ij, (false, if ij == start { 0 } else { u32::MAX })))
+        .map(|&ij| (ij, (false, if ij == start { 0 } else { u32::MAX }, vec![])))
         .collect();
     loop {
-        let (&u, &(_, d)) = dp
+        let (&u, &(_, d, _)) = dp
             .iter()
-            .filter(|(_, (b, _))| !b)
-            .min_by_key(|(_, (_, d))| d)
+            .filter(|(_, (b, _, _))| !b)
+            .min_by_key(|(_, (_, dd, _))| dd)
             .unwrap();
         if u == end {
-            return Some(d as u32);
+            return (end, mat, dp);
         }
-        dp.insert(u, (true, d));
+        dp.get_mut(&u).unwrap().0 = true;
         for &(v, weight) in edges[&u].iter() {
-            let (_, dd) = dp.get_mut(&v).unwrap();
-            *dd = std::cmp::min(*dd, d + weight);
+            let (_, dd, ps) = dp.get_mut(&v).unwrap();
+            match (d + weight).cmp(dd) {
+                Ordering::Less => {
+                    *dd = d + weight;
+                    *ps = vec![u];
+                }
+                Ordering::Equal => {
+                    ps.push(u);
+                }
+                Ordering::Greater => {}
+            }
         }
     }
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (end, _, dp) = common(input);
+    dp.get(&end).map(|&(_, d, _)| d)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
