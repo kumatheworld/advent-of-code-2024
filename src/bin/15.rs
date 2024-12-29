@@ -1,4 +1,4 @@
-use core::panic;
+use core::unreachable;
 
 use advent_of_code::Matrix;
 use itertools::Itertools;
@@ -24,7 +24,7 @@ fn common(
         'v' => Some((1, 0)),
         '<' => Some((0, -1)),
         '\n' => None,
-        _ => panic!(),
+        _ => unreachable!(),
     });
 
     for dij in directions {
@@ -50,7 +50,7 @@ fn push_line(
             b'.' => break,
             b if box_bytes.contains(&b) => (),
             b'#' => return (i, j),
-            _ => panic!(),
+            _ => unreachable!(),
         }
         k += 1;
     }
@@ -78,7 +78,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     '.' => Some(vec![b'.', b'.']),
                     '@' => Some(vec![b'@', b'.']),
                     '\n' => None,
-                    _ => panic!(),
+                    _ => unreachable!(),
                 })
                 .flatten()
                 .collect_vec()
@@ -108,7 +108,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                                 }
                             }
                             Some(b'#') => return (i, j),
-                            _ => panic!(),
+                            _ => unreachable!(),
                         }
                     }
                     js = js2;

@@ -27,7 +27,7 @@ fn patrol(mat: &mut Matrix<u8>, i0: i32, j0: i32) -> Option<u32> {
                 d = (d + 1) % 4;
             }
             Some(b'X') => continue,
-            Some(_) => panic!(),
+            Some(_) => unreachable!(),
             None => return Some(sum),
         }
     }

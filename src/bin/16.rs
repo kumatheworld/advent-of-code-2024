@@ -115,7 +115,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     seen[(iii, j)] = true;
                 }
             } else {
-                panic!();
+                unreachable!();
             }
             traverse((ii, jj), seen, dp);
         }
