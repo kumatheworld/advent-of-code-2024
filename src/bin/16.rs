@@ -99,7 +99,33 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    fn traverse(
+        (i, j): (i32, i32),
+        seen: &mut Matrix<bool>,
+        dp: &HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
+    ) {
+        seen[(i, j)] = true;
+        for &(ii, jj) in &dp[&(i, j)].2 {
+            if i == ii {
+                for jjj in between(j, jj) {
+                    seen[(i, jjj)] = true;
+                }
+            } else if j == jj {
+                for iii in between(i, ii) {
+                    seen[(iii, j)] = true;
+                }
+            } else {
+                panic!();
+            }
+            traverse((ii, jj), seen, dp);
+        }
+    }
+
+    let (end, mat, dp) = common(input);
+    let mut seen = mat.new_uniform(false);
+    traverse(end, &mut seen, &dp);
+
+    Some(seen.indices().filter(|&ij| seen[ij]).count() as u32)
 }
 
 #[cfg(test)]
