@@ -1,12 +1,11 @@
 use std::ops::Range;
 
 use itertools::Itertools;
-use regex::Regex;
 
 advent_of_code::solution!(13);
 
 fn common(input: &str, range: Range<i64>, offset: i64) -> Option<u64> {
-    let re = Regex::new(
+    let re = regex::Regex::new(
         r"^Button A: X\+(\d+), Y\+(\d+)\nButton B: X\+(\d+), Y\+(\d+)\nPrize: X=(\d+), Y=(\d+)$",
     )
     .unwrap();

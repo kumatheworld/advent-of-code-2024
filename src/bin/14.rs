@@ -1,12 +1,11 @@
 // use advent_of_code::Matrix;
 use itertools::Itertools;
-use regex::Regex;
 
 advent_of_code::solution!(14);
 
 fn common(input: &str) -> ((i32, i32), impl Iterator<Item = (i32, i32, i32, i32)> + '_) {
     const BOUNDARY: usize = 1000;
-    let re = Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)$").unwrap();
+    let re = regex::Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)$").unwrap();
 
     let size = if input.len() < BOUNDARY {
         (7, 11)
