@@ -16,7 +16,7 @@ fn common(input: &str, move_blocks: fn(&str, &mut Vec<Option<usize>>)) -> Option
 
     Some(
         blocks
-            .iter()
+            .into_iter()
             .enumerate()
             .map(|(i, j)| i as u64 * j.unwrap_or_default() as u64)
             .sum(),
@@ -55,8 +55,8 @@ pub fn part_two(input: &str) -> Option<u64> {
             })
             .collect_vec();
 
-        for &(i, some) in somes.iter().rev() {
-            if let Some(&(j, _)) = nones[..i >> 1].iter().find(|&&(_, cap)| cap >= some) {
+        for (i, some) in somes.into_iter().rev() {
+            if let Some(&(j, _)) = nones[..i >> 1].into_iter().find(|&&(_, cap)| cap >= some) {
                 let left = cumsum[j - 1];
                 let right = cumsum[i - 1];
                 for k in 0..some as usize {
