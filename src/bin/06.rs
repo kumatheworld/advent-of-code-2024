@@ -3,7 +3,7 @@ use itertools::iproduct;
 
 advent_of_code::solution!(6);
 
-fn patrol(mat: &mut Matrix<u8>, i0: i32, j0: i32) -> Option<u32> {
+fn patrol(mat: &mut Matrix<u8>, (i0, j0): (i32, i32)) -> Option<u32> {
     const DI: [i32; 4] = [-1, 0, 1, 0];
     const DJ: [i32; 4] = [0, 1, 0, -1];
     let mut d = 0;
@@ -36,15 +36,15 @@ fn patrol(mat: &mut Matrix<u8>, i0: i32, j0: i32) -> Option<u32> {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let mut mat = Matrix::from(input);
-    let (i0, j0) = mat.position(b'^').unwrap();
-    patrol(&mut mat, i0, j0)
+    let ij0 = mat.position(b'^').unwrap();
+    patrol(&mut mat, ij0)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mat0 = Matrix::from(input);
     let (i0, j0) = mat0.position(b'^').unwrap();
     let mut mat1 = mat0.clone();
-    patrol(&mut mat1, i0, j0);
+    patrol(&mut mat1, (i0, j0));
 
     Some(
         iproduct!(0..mat0.rows as i32, 0..mat0.cols as i32)
@@ -52,7 +52,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 mat1[(ii, jj)] == b'X' && (ii != i0 || jj != j0) && {
                     let mut mat = mat0.clone();
                     mat[(ii, jj)] = b'#';
-                    patrol(&mut mat, i0, j0).is_none()
+                    patrol(&mut mat, (i0, j0)).is_none()
                 }
             })
             .count() as u32,
