@@ -98,7 +98,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 while !js.is_empty() {
                     jss.push(js.clone());
                     let mut js2 = vec![];
-                    for &jj in js.iter() {
+                    for jj in js.into_iter() {
                         match mat.get(i + k * di, jj) {
                             Some(b'.') => (),
                             Some(b'[') => js2.extend([jj, jj + 1].iter()),
@@ -116,9 +116,9 @@ pub fn part_two(input: &str) -> Option<u32> {
                 }
 
                 let mut ii = i + k * di;
-                for js in jss.iter().rev() {
+                for js in jss.into_iter().rev() {
                     ii -= di;
-                    for &jj in js {
+                    for jj in js {
                         mat.swap((ii - di, jj), (ii, jj));
                     }
                 }
