@@ -25,7 +25,7 @@ fn common(input: &str, ops: &[fn(u64, u64) -> u64]) -> Option<u64> {
                 let mut it: Box<dyn Iterator<Item = u64>> = Box::new(std::iter::once(first_num));
                 for num_str in rest.split(' ') {
                     let n = num_str.parse::<u64>().unwrap();
-                    it = Box::new(it.flat_map(move |m| ops.iter().map(move |&f| f(m, n))));
+                    it = Box::new(it.flat_map(move |m| ops.iter().map(move |f| f(m, n))));
                 }
 
                 it.find(|&n| n == test)
