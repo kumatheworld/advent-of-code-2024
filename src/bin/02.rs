@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(2);
 
-fn safe(levels: &Vec<i32>) -> bool {
+fn safe1(levels: &Vec<i32>) -> bool {
     let diff = levels
         .iter()
         .tuple_windows()
@@ -13,30 +13,32 @@ fn safe(levels: &Vec<i32>) -> bool {
     inc || dec
 }
 
-fn parse(input: &str) -> impl Iterator<Item = Vec<i32>> + '_ {
-    input.lines().map(|line| {
-        line.split(" ")
-            .map(|elem| elem.parse::<i32>().unwrap())
-            .collect()
-    })
+fn common(input: &str, safe: fn(&Vec<i32>) -> bool) -> Option<u32> {
+    Some(
+        input
+            .lines()
+            .map(|line| {
+                line.split(" ")
+                    .map(|elem| elem.parse::<i32>().unwrap())
+                    .collect()
+            })
+            .filter(safe)
+            .count() as u32,
+    )
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    Some(parse(input).filter(safe).count() as u32)
+    common(input, safe1)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    Some(
-        parse(input)
-            .filter(|levels| {
-                (0..levels.len()).any(|i| {
-                    let mut levels_removed = levels.clone();
-                    levels_removed.remove(i);
-                    safe(&levels_removed)
-                })
-            })
-            .count() as u32,
-    )
+    common(input, |levels| {
+        (0..levels.len()).any(|i| {
+            let mut levels_removed = levels.clone();
+            levels_removed.remove(i);
+            safe1(&levels_removed)
+        })
+    })
 }
 
 #[cfg(test)]
