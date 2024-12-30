@@ -15,10 +15,10 @@ fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
 pub fn part_one(input: &str) -> Option<u32> {
     let (left, right) = parse(input);
     Some(
-        left.iter()
+        left.into_iter()
             .sorted()
-            .zip(right.iter().sorted())
-            .map(|(m, n)| m.abs_diff(*n))
+            .zip(right.into_iter().sorted())
+            .map(|(m, n)| m.abs_diff(n))
             .sum(),
     )
 }
@@ -26,8 +26,8 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let (left, right) = parse(input);
     Some(
-        left.iter()
-            .map(|m| m * right.iter().filter(|n| *n == m).count() as u32)
+        left.into_iter()
+            .map(|m| m * right.iter().filter(|&&n| n == m).count() as u32)
             .sum(),
     )
 }
