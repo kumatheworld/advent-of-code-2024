@@ -81,15 +81,14 @@ pub fn part_one(input: &str) -> Option<String> {
 pub fn part_two(input: &str) -> Option<u32> {
     let (mut executor, program) = common(input);
     let sequence = program.iter().map(|&(i, j)| [i, j]).flatten().collect_vec();
-    for a0 in 0.. {
-        if executor(program.clone(), Some(a0)) // Can the cloning be avoided?
-            .zip_longest(&sequence)
-            .all(|p| matches!(p, Both(m,n) if m == *n))
-        {
-            return Some(a0);
-        }
-    }
-    unreachable!();
+    (0..)
+        .filter_map(|a0| {
+            executor(program.clone(), Some(a0)) // Can the cloning be avoided?
+                .zip_longest(&sequence)
+                .all(|p| matches!(p, Both(m,n) if m == *n))
+                .then_some(a0)
+        })
+        .next()
 }
 
 #[cfg(test)]
