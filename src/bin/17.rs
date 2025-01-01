@@ -1,3 +1,4 @@
+use itertools::EitherOrBoth::Both;
 use itertools::Itertools;
 
 advent_of_code::solution!(17);
@@ -77,8 +78,18 @@ pub fn part_one(input: &str) -> Option<String> {
     Some(executor(program, None).map(|n| n.to_string()).join(","))
 }
 
-pub fn part_two(input: &str) -> Option<u64> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    let (mut executor, program) = common(input);
+    let sequence = program.iter().map(|&(i, j)| [i, j]).flatten().collect_vec();
+    for a0 in 0.. {
+        if executor(program.clone(), Some(a0)) // Can the cloning be avoided?
+            .zip_longest(&sequence)
+            .all(|p| matches!(p, Both(m,n) if m == *n))
+        {
+            return Some(a0);
+        }
+    }
+    unreachable!();
 }
 
 #[cfg(test)]
