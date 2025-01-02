@@ -1,11 +1,10 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, DIJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(18);
 
 pub fn part_one(input: &str) -> Option<u32> {
     const BOUNDARY: usize = 100;
-    const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
     let coordinates = input
         .lines()

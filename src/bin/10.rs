@@ -1,10 +1,9 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, DIJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(10);
 
 fn common(input: &str, apply_unique: bool) -> Option<u32> {
-    const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let mat = Matrix::from(input);
 
     Some(

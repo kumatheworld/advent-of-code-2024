@@ -1,4 +1,4 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, DIJ};
 use itertools::{iproduct, Itertools};
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -17,7 +17,6 @@ fn common(
     HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
 ) {
     const TURN_PENALTY: u32 = 1000;
-    const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
     let linear = [vec![DIJ[0], DIJ[2]], vec![DIJ[1], DIJ[3]]];
 
     let mat = Matrix::from(input);

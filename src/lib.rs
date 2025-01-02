@@ -5,6 +5,8 @@ pub mod template;
 use itertools::iproduct;
 use std::fmt;
 
+pub const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+
 #[derive(Clone)]
 pub struct Matrix<T> {
     pub array: Box<[T]>,
