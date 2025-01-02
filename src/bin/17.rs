@@ -78,15 +78,41 @@ pub fn part_one(input: &str) -> Option<String> {
     Some(executor(program, None).map(|n| n.to_string()).join(","))
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(input: &str) -> Option<u64> {
     let (mut executor, program) = common(input);
     let sequence = program.iter().map(|&(i, j)| [i, j]).flatten().collect_vec();
+
+    if let &[2, 4, 1, n1, 7, 5, 1, n3, 4, 1, 5, 5, 0, 3, 3, 0] = sequence.as_slice() {
+        // It turns out that the program repeatedly outputs (n1 ^ n2 ^ (a % 8) ^ (a >> (n1 ^ (a % 8)))) % 8,
+        // after each of which a >>= 3 is performed and the program exits if a is zero.
+        // We search for a0 from the top to the bottom, dividing it into chunks of 3 bits.
+        fn search(a: u64, n1: u8, n3: u8, seq: &[u8]) -> Option<u64> {
+            match seq.split_last() {
+                None => Some(a),
+                Some((&last, rest)) => {
+                    let a8 = a << 3;
+                    (0..8)
+                        .filter_map(|m| {
+                            let a8m = a8 + m as u64;
+                            if (n1 ^ n3 ^ m ^ ((a8m >> (n1 ^ m)) & 7) as u8) == last {
+                                search(a8m as u64, n1, n3, rest)
+                            } else {
+                                None
+                            }
+                        })
+                        .next()
+                }
+            }
+        }
+        return search(0, n1, n3, &sequence);
+    }
+
     (0..)
         .filter_map(|a0| {
             executor(program.clone(), Some(a0)) // Can the cloning be avoided?
                 .zip_longest(&sequence)
                 .all(|p| matches!(p, Both(m,n) if m == *n))
-                .then_some(a0)
+                .then_some(a0 as u64)
         })
         .next()
 }
