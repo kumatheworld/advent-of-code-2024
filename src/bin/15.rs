@@ -99,7 +99,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     jss.push(js.clone());
                     let mut js2 = vec![];
                     for jj in js.into_iter() {
-                        match mat.get(i + k * di, jj) {
+                        match mat.get((i + k * di, jj)) {
                             Some(b'.') => (),
                             Some(b'[') => js2.extend([jj, jj + 1].iter()),
                             Some(b']') => {
