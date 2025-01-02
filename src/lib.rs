@@ -45,6 +45,13 @@ impl<T: AsSymbol> fmt::Display for Matrix<T> {
     }
 }
 
+impl<T: Clone> Matrix<T> {
+    pub fn uniform(rows: usize, cols: usize, value: T) -> Self {
+        let array = vec![value; rows * cols].into_boxed_slice();
+        Matrix { array, rows, cols }
+    }
+}
+
 impl Matrix<u8> {
     pub fn from(input: &str) -> Self {
         let cols = input.find('\n').unwrap();
@@ -68,17 +75,14 @@ impl<T> Matrix<T> {
         iproduct!(0..self.rows as i32, 0..self.cols as i32)
     }
 
-    pub fn new_uniform<U: Clone>(&self, u: U) -> Matrix<U> {
-        let rows = self.rows;
-        let cols = self.cols;
-        let array = vec![u; rows * cols].into_boxed_slice();
-        Matrix { array, rows, cols }
-    }
-
     pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
         let index1 = self.serialize(ij0);
         let index2 = self.serialize(ij1);
         self.array.swap(index1, index2);
+    }
+
+    pub fn new_uniform<U: Clone>(&self, value: U) -> Matrix<U> {
+        Matrix::uniform(self.rows, self.cols, value)
     }
 }
 
