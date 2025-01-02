@@ -24,7 +24,6 @@ pub fn part_one(input: &str) -> Option<u32> {
     for &(x, y) in &coordinates[..bytes] {
         seen[(y, x)] = true;
     }
-    print!("{}", seen);
 
     let start = (0, 0);
     let end = (size as i32 - 1, size as i32 - 1);
