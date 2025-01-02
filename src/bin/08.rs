@@ -35,7 +35,7 @@ where
 pub fn part_one(input: &str) -> Option<u32> {
     common(input, |(i0, j0), (i1, j1), mat| {
         let ij2 = (2 * i1 - i0, 2 * j1 - j0);
-        Box::new(mat.get(ij2).is_some().then(|| ij2).into_iter())
+        Box::new(mat.get(ij2).is_some().then_some(ij2).into_iter())
     })
 }
 
