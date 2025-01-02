@@ -12,7 +12,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         )
         .filter(|&((i, j), (di, dj))| {
             // Check 'S' first to avoid out-of-bounds errors
-            mat.get(i + 3 * di, j + 3 * dj) == Some(b'S')
+            mat.get((i + 3 * di, j + 3 * dj)) == Some(b'S')
                 && mat[(i + 2 * di, j + 2 * dj)] == b'A'
                 && mat[(i + di, j + dj)] == b'M'
         })

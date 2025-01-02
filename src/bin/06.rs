@@ -16,7 +16,7 @@ fn patrol(mat: &mut Matrix<u8>, (i0, j0): (i32, i32)) -> Option<u32> {
     for _ in 0..mat.rows * mat.cols {
         i += DI[d];
         j += DJ[d];
-        match mat.get(i, j) {
+        match mat.get((i, j)) {
             Some(b'.') => {
                 sum += 1;
                 mat[(i, j)] = b'X';

@@ -17,7 +17,7 @@ fn common(input: &str, apply_unique: bool) -> Option<u32> {
                     let mat_ref = &mat;
                     buf = Box::new(
                         buf.flat_map(|(i, j)| DIJ.map(|(di, dj)| (i + di, j + dj)))
-                            .filter(move |&(i, j)| mat_ref.get(i, j) == Some(level)),
+                            .filter(move |&ij| mat_ref.get(ij) == Some(level)),
                     );
                     if apply_unique {
                         buf = Box::new(buf.unique());

@@ -25,7 +25,7 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
             let (ii, jj) = stack.pop().unwrap();
             DIJ.iter()
                 .filter_map(|&(di, dj)| {
-                    (mat.get(ii + di, jj + dj) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
+                    (mat.get((ii + di, jj + dj)) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
                 })
                 .for_each(|(iii, jjj)| {
                     if groups[(iii, jjj)].is_some() {
@@ -48,8 +48,8 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                     .flat_map(|i| {
                         (0..mat.cols as i32)
                             .map(move |j| {
-                                (g.get(i - 1, j) == Some(Some(gid)))
-                                    .cmp(&(g.get(i, j) == Some(Some(gid))))
+                                (g.get((i - 1, j)) == Some(Some(gid)))
+                                    .cmp(&(g.get((i, j)) == Some(Some(gid))))
                             })
                             .dedup()
                     })
@@ -59,8 +59,8 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                         .flat_map(|j| {
                             (0..mat.rows as i32)
                                 .map(move |i| {
-                                    (g.get(i, j - 1) == Some(Some(gid)))
-                                        .cmp(&(g.get(i, j) == Some(Some(gid))))
+                                    (g.get((i, j - 1)) == Some(Some(gid)))
+                                        .cmp(&(g.get((i, j)) == Some(Some(gid))))
                                 })
                                 .dedup()
                         })
