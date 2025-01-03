@@ -1,7 +1,9 @@
 advent_of_code::solution!(19);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    None
+    let (stripes, designs) = input.split_once("\n\n").unwrap();
+    let re = regex::Regex::new(format!("^({})*$", stripes.replace(", ", "|")).as_str()).unwrap();
+    Some(designs.lines().filter(|line| re.is_match(line)).count() as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
