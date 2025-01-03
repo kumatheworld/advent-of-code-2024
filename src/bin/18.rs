@@ -3,9 +3,8 @@ use itertools::Itertools;
 
 advent_of_code::solution!(18);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn parse(input: &str) -> (Vec<(i32, i32)>, usize, usize) {
     const BOUNDARY: usize = 100;
-
     let coordinates = input
         .lines()
         .map(|line| {
@@ -20,22 +19,27 @@ pub fn part_one(input: &str) -> Option<u32> {
         (71, 1024)
     };
 
+    (coordinates, size, bytes)
+}
+
+fn distance(coordinates: &[(i32, i32)], size: usize) -> u32 {
     let mut seen = Matrix::uniform(size, size, false);
-    for &(x, y) in &coordinates[..bytes] {
+    for &(x, y) in coordinates {
         seen[(y, x)] = true;
     }
 
     let start = (0, 0);
     let end = (size as i32 - 1, size as i32 - 1);
     let mut queue = vec![start];
+    let mut k = 1;
     seen[start] = true;
-    for k in 1.. {
+    while !queue.is_empty() {
         let mut q = vec![];
         for (i, j) in queue {
             for (di, dj) in DIJ {
                 let iijj = (i + di, j + dj);
                 if iijj == end {
-                    return Some(k);
+                    return k;
                 }
                 if seen.get(iijj) == Some(false) {
                     seen[iijj] = true;
@@ -44,8 +48,14 @@ pub fn part_one(input: &str) -> Option<u32> {
             }
         }
         queue = q;
+        k += 1;
     }
-    None
+    u32::MAX
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (coordinates, size, bytes) = parse(input);
+    Some(distance(&coordinates[..bytes], size))
 }
 
 pub fn part_two(input: &str) -> Option<String> {
