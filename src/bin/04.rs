@@ -29,7 +29,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         [b'S', b'S', b'M', b'M'],
     ];
     Some(
-        iproduct!(1..(mat.rows - 1) as i32, 1..(mat.cols - 1) as i32)
+        mat.inner_indices()
             .filter(|&(i, j)| {
                 mat[(i, j)] == b'A'
                     && MMSS.contains(&[
