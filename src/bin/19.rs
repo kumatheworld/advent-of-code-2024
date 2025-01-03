@@ -6,8 +6,29 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(designs.lines().filter(|line| re.is_match(line)).count() as u32)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u64> {
+    let (stripes, designs) = input.split_once("\n\n").unwrap();
+    let stripes: Vec<&str> = stripes.split(", ").collect();
+    Some(
+        designs
+            .lines()
+            .map(move |line| {
+                let mut dp = vec![0; line.len() + 1];
+                dp[0] = 1;
+                for i in 1..=line.len() {
+                    for &s in &stripes {
+                        if s.len() <= i {
+                            let j = i - s.len();
+                            if line[j..i] == *s {
+                                dp[i] += dp[j];
+                            }
+                        }
+                    }
+                }
+                dp[line.len()]
+            })
+            .sum(),
+    )
 }
 
 #[cfg(test)]
