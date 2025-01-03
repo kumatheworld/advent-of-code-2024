@@ -77,6 +77,9 @@ impl<T> Matrix<T> {
         iproduct!(0..self.rows as i32, 0..self.cols as i32)
     }
 
+    pub fn inner_indices(&self) -> impl Iterator<Item = (i32, i32)> {
+        iproduct!(1..(self.rows - 1) as i32, 1..(self.cols - 1) as i32)
+    }
     pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
         let index1 = self.serialize(ij0);
         let index2 = self.serialize(ij1);
