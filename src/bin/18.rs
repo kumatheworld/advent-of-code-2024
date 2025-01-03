@@ -59,7 +59,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<String> {
-    None
+    let (coordinates, size, bytes) = parse(input);
+    let k = bytes
+        + (bytes + 1..coordinates.len())
+            .collect_vec()
+            .partition_point(|&b| distance(&coordinates[..b], size) < u32::MAX);
+    let (i, j) = coordinates[k];
+    Some(format!("{},{}", i, j))
 }
 
 #[cfg(test)]
