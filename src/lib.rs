@@ -2,7 +2,7 @@ pub mod template;
 
 // Use this file to add helper functions and additional modules.
 
-use itertools::iproduct;
+use itertools::{iproduct, Product};
 use std::fmt;
 
 pub const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
@@ -73,11 +73,11 @@ impl<T> Matrix<T> {
         self.cols * i as usize + j as usize
     }
 
-    pub fn indices(&self) -> impl Iterator<Item = (i32, i32)> {
+    pub fn indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
         iproduct!(0..self.rows as i32, 0..self.cols as i32)
     }
 
-    pub fn inner_indices(&self) -> impl Iterator<Item = (i32, i32)> {
+    pub fn inner_indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
         iproduct!(1..(self.rows - 1) as i32, 1..(self.cols - 1) as i32)
     }
     pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
