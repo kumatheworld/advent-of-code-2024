@@ -3,7 +3,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(20);
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn common(input: &str, picoseconds: u32) -> Option<u32> {
     const SAVE: u32 = 100;
 
     let mut mat = Matrix::from(input);
@@ -26,16 +26,21 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     Some(
         dist.inner_indices()
-            .filter(|(i, j)| {
-                let ds = DIJ
-                    .iter()
-                    .filter_map(|(di, dj)| dist[(i + di, j + dj)])
-                    .sorted()
-                    .collect_vec();
-                ds.len() >= 2 && ds[ds.len() - 1] >= ds[0] + SAVE + 2
+            .tuple_combinations()
+            .filter(|&((i0, j0), (i1, j1))| {
+                if let (Some(d0), Some(d1)) = (dist[(i0, j0)], dist[(i1, j1)]) {
+                    let dij = i0.abs_diff(i1) + j0.abs_diff(j1);
+                    dij <= picoseconds && (d0 as i32).abs_diff(d1) >= SAVE + dij
+                } else {
+                    false
+                }
             })
             .count() as u32,
     )
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    common(input, 2)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
