@@ -57,9 +57,9 @@ impl<T: Clone> Matrix<T> {
 impl Matrix<u8> {
     pub fn from(input: &str) -> Self {
         let cols = input.find('\n').unwrap();
-        let rows = (input.trim().len() + 1) / (cols + 1);
+        let rows = (input.trim_end().len() + 1) / (cols + 1);
         let array = input
-            .trim()
+            .trim_end()
             .lines()
             .flat_map(|line| line.bytes())
             .collect::<Vec<_>>()
