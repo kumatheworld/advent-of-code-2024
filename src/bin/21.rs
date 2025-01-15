@@ -17,10 +17,7 @@ pub fn part_one(input: &str) -> Option<u32> {
                 if di == 0 || dj == 0 {
                     vec![[is, js, a].concat()]
                 } else {
-                    vec![
-                        [is.clone(), js.clone(), a.clone()].concat(),
-                        [js, is, a].concat(),
-                    ]
+                    vec![[&is[..], &js[..], &a[..]].concat(), [js, is, a].concat()]
                 }
             })
         })
