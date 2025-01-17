@@ -5,9 +5,7 @@ use std::iter;
 
 advent_of_code::solution!(21);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    const NUM_INTERMEDIATE_ROBOTS: usize = 2;
-
+pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
     let d2ks: HashMap<(i32, i32), [Vec<u8>; 2]> = iproduct!(-3..=3, -2..=2)
         .map(|(di, dj): (i32, i32)| {
             ((di, dj), {
@@ -42,14 +40,14 @@ pub fn part_one(input: &str) -> Option<u32> {
         input
             .lines()
             .map(|line| {
-                line[..line.len() - 1].parse::<u32>().unwrap() * {
+                line[..line.len() - 1].parse::<u64>().unwrap() * {
                     let mut keys: Box<dyn Iterator<Item = u8>> = Box::new(
                         iter::once(b'A')
                             .chain(line.bytes())
                             .tuple_windows()
                             .flat_map(|ab| get_directions(ab, &nk)),
                     );
-                    for _ in 0..NUM_INTERMEDIATE_ROBOTS {
+                    for _ in 0..num_intermediate_robots {
                         keys = Box::new(
                             iter::once(b'A')
                                 .chain(keys)
@@ -57,11 +55,15 @@ pub fn part_one(input: &str) -> Option<u32> {
                                 .flat_map(|ab| kk2ks.get(&ab).unwrap().clone()),
                         );
                     }
-                    keys.count() as u32
+                    keys.count() as u64
                 }
             })
             .sum(),
     )
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    common(input, 2)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
