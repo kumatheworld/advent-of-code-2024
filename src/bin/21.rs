@@ -1,7 +1,6 @@
 use advent_of_code::Matrix;
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
-use std::iter;
 
 advent_of_code::solution!(21);
 
@@ -41,21 +40,27 @@ pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
             .lines()
             .map(|line| {
                 line[..line.len() - 1].parse::<u64>().unwrap() * {
-                    let mut keys: Box<dyn Iterator<Item = u8>> = Box::new(
-                        iter::once(b'A')
-                            .chain(line.bytes())
-                            .tuple_windows()
-                            .flat_map(|ab| get_directions(ab, &nk)),
-                    );
-                    for _ in 0..num_intermediate_robots {
-                        keys = Box::new(
-                            iter::once(b'A')
-                                .chain(keys)
+                    let mut counter = HashMap::<(u8, u8), u64>::new();
+                    std::iter::once(b'A')
+                        .chain(
+                            line.bytes()
                                 .tuple_windows()
-                                .flat_map(|ab| kk2ks.get(&ab).unwrap().clone()),
-                        );
+                                .flat_map(|ab| get_directions(ab, &nk)),
+                        )
+                        .tuple_windows()
+                        .for_each(|ab| *counter.entry(ab).or_insert(0) += 1);
+
+                    for _ in 0..num_intermediate_robots {
+                        let mut counter_new = HashMap::<(u8, u8), u64>::new();
+                        counter.into_iter().for_each(|(k, v)| {
+                            std::iter::once(b'A')
+                                .chain(kk2ks.get(&k).unwrap().into_iter().map(|&a| a))
+                                .tuple_windows()
+                                .for_each(|ab| *counter_new.entry(ab).or_insert(0) += v)
+                        });
+                        counter = counter_new;
                     }
-                    keys.count() as u64
+                    1 + counter.values().sum::<u64>()
                 }
             })
             .sum(),
