@@ -1,7 +1,21 @@
 advent_of_code::solution!(22);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    None
+pub fn part_one(input: &str) -> Option<u64> {
+    const REPS: usize = 2000;
+    Some(
+        input
+            .lines()
+            .map(|line| {
+                let mut n = line.parse::<u64>().unwrap();
+                for _ in 0..REPS {
+                    n = ((n << 6) ^ n) & 16777215;
+                    n = ((n >> 5) ^ n) & 16777215;
+                    n = ((n << 11) ^ n) & 16777215;
+                }
+                n
+            })
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
