@@ -43,7 +43,8 @@ pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
                     let mut counter = HashMap::<(u8, u8), u64>::new();
                     std::iter::once(b'A')
                         .chain(
-                            line.bytes()
+                            std::iter::once(b'A')
+                                .chain(line.bytes())
                                 .tuple_windows()
                                 .flat_map(|ab| get_directions(ab, &nk)),
                         )
@@ -60,7 +61,7 @@ pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
                         });
                         counter = counter_new;
                     }
-                    1 + counter.values().sum::<u64>()
+                    counter.values().sum::<u64>()
                 }
             })
             .sum(),
