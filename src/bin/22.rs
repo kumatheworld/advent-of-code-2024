@@ -1,16 +1,24 @@
 advent_of_code::solution!(22);
 
+const REPS: usize = 2000;
+
+fn next_secret(ref_n: &mut u64) -> u64 {
+    let mut n = *ref_n;
+    n = ((n << 6) ^ n) & 16777215;
+    n = ((n >> 5) ^ n) & 16777215;
+    n = ((n << 11) ^ n) & 16777215;
+    *ref_n = n;
+    n
+}
+
 pub fn part_one(input: &str) -> Option<u64> {
-    const REPS: usize = 2000;
     Some(
         input
             .lines()
             .map(|line| {
                 let mut n = line.parse::<u64>().unwrap();
                 for _ in 0..REPS {
-                    n = ((n << 6) ^ n) & 16777215;
-                    n = ((n >> 5) ^ n) & 16777215;
-                    n = ((n << 11) ^ n) & 16777215;
+                    next_secret(&mut n);
                 }
                 n
             })
