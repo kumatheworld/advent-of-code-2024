@@ -1,3 +1,6 @@
+use itertools::Itertools;
+use std::collections::HashMap;
+
 advent_of_code::solution!(22);
 
 const REPS: usize = 2000;
@@ -26,8 +29,35 @@ pub fn part_one(input: &str) -> Option<u64> {
     )
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u16> {
+    input
+        .lines()
+        .map(|line| {
+            let mut n = line.parse::<u64>().unwrap();
+            let prices = std::iter::once((n % 10) as i8)
+                .chain((0..REPS).map(move |_| (next_secret(&mut n) % 10) as i8))
+                .collect_vec();
+
+            let mut changes_and_prices = HashMap::new();
+            prices
+                .iter()
+                .tuple_windows()
+                .map(|(&a, &b)| (a - b) as i8)
+                .tuple_windows::<(_, _, _, _)>()
+                .zip_eq(&prices[4..])
+                .for_each(|(changes, &price)| {
+                    changes_and_prices.entry(changes).or_insert(price as u16);
+                });
+            changes_and_prices
+        })
+        .reduce(|mut acc, caps| {
+            for (changes, price) in caps {
+                *acc.entry(changes).or_insert(0) += price;
+            }
+            acc
+        })?
+        .into_values()
+        .max()
 }
 
 #[cfg(test)]
