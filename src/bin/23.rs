@@ -4,7 +4,7 @@ use itertools::Itertools;
 
 advent_of_code::solution!(23);
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn build_graph(input: &str) -> HashMap<[u8; 2], HashSet<[u8; 2]>> {
     let mut graph = HashMap::<[u8; 2], HashSet<[u8; 2]>>::new();
     for line in input.lines() {
         let (u, v) = line.split_once('-').unwrap();
@@ -13,7 +13,11 @@ pub fn part_one(input: &str) -> Option<u32> {
         graph.entry(u).or_default().insert(v);
         graph.entry(v).or_default().insert(u);
     }
+    graph
+}
 
+pub fn part_one(input: &str) -> Option<u32> {
+    let graph = build_graph(input);
     Some(
         graph
             .iter()
