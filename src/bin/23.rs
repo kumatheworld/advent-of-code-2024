@@ -31,8 +31,47 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<String> {
+    let graph = build_graph(input);
+
+    // The graph turns out regular; every node has the same number of nodes connected
+    // dbg!(graph.values().map(|vs| vs.len()).unique().collect_vec());
+
+    Some(
+        graph
+            .iter()
+            .map(|(u, vs)| {
+                vs.iter()
+                    .powerset()
+                    .collect_vec()
+                    .into_iter()
+                    .rev()
+                    .filter(|ws| {
+                        let ws_set: HashSet<[u8; 2]> =
+                            HashSet::from_iter(ws.clone().into_iter().map(|&w| w));
+                        ws.into_iter().all(|&&w| {
+                            ws_set.is_subset(
+                                &graph
+                                    .get(&w)
+                                    .unwrap()
+                                    .union(&HashSet::from([w]))
+                                    .map(|&w| w)
+                                    .collect(),
+                            )
+                        })
+                    })
+                    .next()
+                    .unwrap()
+                    .into_iter()
+                    .chain([u])
+                    .collect_vec()
+            })
+            .max_by_key(|us| us.len())?
+            .into_iter()
+            .sorted()
+            .flat_map(|v| String::from_utf8(v.to_vec()))
+            .join(","),
+    )
 }
 
 #[cfg(test)]
