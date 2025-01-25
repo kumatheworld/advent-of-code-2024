@@ -1,7 +1,65 @@
+use std::collections::HashMap;
+
+use itertools::Itertools;
+
 advent_of_code::solution!(24);
 
-pub fn part_one(input: &str) -> Option<u32> {
-    None
+pub fn part_one(input: &str) -> Option<u64> {
+    let (xys, gates) = input.split_once("\n\n").unwrap();
+
+    let mut wires = HashMap::<[u8; 3], Option<bool>>::new();
+    for xy in xys.lines() {
+        let (key, value) = xy.split_once(": ").unwrap();
+        let key = <[u8; 3]>::try_from(key.as_bytes()).unwrap();
+        let value = match value {
+            "0" => false,
+            "1" => true,
+            _ => unreachable!(),
+        };
+        wires.insert(key, Some(value));
+    }
+
+    let mut gates = gates
+        .lines()
+        .map(|line| {
+            let (w0, op, w1, _, w2) = line.split(' ').collect_tuple().unwrap();
+            let w0 = <[u8; 3]>::try_from(w0.as_bytes()).unwrap();
+            let w1 = <[u8; 3]>::try_from(w1.as_bytes()).unwrap();
+            let w2 = <[u8; 3]>::try_from(w2.as_bytes()).unwrap();
+            wires.entry(w0).or_insert(None);
+            wires.entry(w1).or_insert(None);
+            wires.entry(w2).or_insert(None);
+            (w0, op, w1, w2)
+        })
+        .collect_vec();
+
+    while !gates.is_empty() {
+        gates.retain(|&(w0, op, w1, w2)| {
+            if let (Some(b0), Some(b1)) = (*wires.get(&w0).unwrap(), *wires.get(&w1).unwrap()) {
+                *wires.get_mut(&w2).unwrap() = Some(match op {
+                    "AND" => b0 && b1,
+                    "XOR" => b0 != b1,
+                    "OR" => b0 || b1,
+                    _ => unreachable!(),
+                });
+                false
+            } else {
+                true
+            }
+        })
+    }
+
+    Some(
+        wires
+            .iter()
+            .filter(|(w, _)| w[0] == b'z')
+            .sorted()
+            .enumerate()
+            .fold(
+                0,
+                |acc, (i, (_, &b))| if b.unwrap() { (1 << i) | acc } else { acc },
+            ),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
