@@ -4,7 +4,12 @@ use itertools::Itertools;
 
 advent_of_code::solution!(24);
 
-pub fn part_one(input: &str) -> Option<u64> {
+fn parse_wires_and_gates(
+    input: &str,
+) -> (
+    HashMap<[u8; 3], Option<bool>>,
+    Vec<([u8; 3], &str, [u8; 3], [u8; 3])>,
+) {
     let (xys, gates) = input.split_once("\n\n").unwrap();
 
     let mut wires = HashMap::<[u8; 3], Option<bool>>::new();
@@ -19,7 +24,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         wires.insert(key, Some(value));
     }
 
-    let mut gates = gates
+    let gates = gates
         .lines()
         .map(|line| {
             let (w0, op, w1, _, w2) = line.split(' ').collect_tuple().unwrap();
@@ -32,6 +37,12 @@ pub fn part_one(input: &str) -> Option<u64> {
             (w0, op, w1, w2)
         })
         .collect_vec();
+
+    (wires, gates)
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    let (mut wires, mut gates) = parse_wires_and_gates(input);
 
     while !gates.is_empty() {
         gates.retain(|&(w0, op, w1, w2)| {
