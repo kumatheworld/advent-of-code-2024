@@ -6,16 +6,12 @@ advent_of_code::solution!(24);
 
 fn parse_wires_and_gates(
     input: &str,
-) -> (
-    HashMap<[u8; 3], Option<bool>>,
-    Vec<([u8; 3], &str, [u8; 3], [u8; 3])>,
-) {
+) -> (HashMap<&str, Option<bool>>, Vec<(&str, &str, &str, &str)>) {
     let (xys, gates) = input.split_once("\n\n").unwrap();
 
-    let mut wires = HashMap::<[u8; 3], Option<bool>>::new();
+    let mut wires = HashMap::<&str, Option<bool>>::new();
     for xy in xys.lines() {
         let (key, value) = xy.split_once(": ").unwrap();
-        let key = <[u8; 3]>::try_from(key.as_bytes()).unwrap();
         let value = match value {
             "0" => false,
             "1" => true,
@@ -28,9 +24,6 @@ fn parse_wires_and_gates(
         .lines()
         .map(|line| {
             let (w0, op, w1, _, w2) = line.split(' ').collect_tuple().unwrap();
-            let w0 = <[u8; 3]>::try_from(w0.as_bytes()).unwrap();
-            let w1 = <[u8; 3]>::try_from(w1.as_bytes()).unwrap();
-            let w2 = <[u8; 3]>::try_from(w2.as_bytes()).unwrap();
             wires.entry(w0).or_insert(None);
             wires.entry(w1).or_insert(None);
             wires.entry(w2).or_insert(None);
@@ -63,7 +56,7 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(
         wires
             .iter()
-            .filter(|(w, _)| w[0] == b'z')
+            .filter(|(w, _)| w.as_bytes()[0] == b'z')
             .sorted()
             .enumerate()
             .fold(
