@@ -47,11 +47,11 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
                     .position(|&i| i == pages.len() >> 1)
                     .unwrap()];
 
-                if num_next_pages == (0..pages.len()).rev().collect_vec() {
-                    Ok(mid)
+                (if num_next_pages == (0..pages.len()).rev().collect_vec() {
+                    Ok
                 } else {
-                    Err(mid)
-                }
+                    Err
+                })(mid)
             })
             .filter_map(ok_or_err)
             .sum(),
