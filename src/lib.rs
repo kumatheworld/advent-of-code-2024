@@ -76,12 +76,12 @@ impl<T> Matrix<T> {
         self.cols * i as usize + j as usize
     }
 
-    pub fn indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
-        iproduct!(0..self.rows as i32, 0..self.cols as i32)
+    pub fn indices(&self) -> Product<std::ops::Range<Index>, std::ops::Range<Index>> {
+        iproduct!(0..self.rows as Index, 0..self.cols as Index)
     }
 
-    pub fn inner_indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
-        iproduct!(1..(self.rows - 1) as i32, 1..(self.cols - 1) as i32)
+    pub fn inner_indices(&self) -> Product<std::ops::Range<Index>, std::ops::Range<Index>> {
+        iproduct!(1..(self.rows - 1) as Index, 1..(self.cols - 1) as Index)
     }
     pub fn swap(&mut self, ij0: IJ, ij1: IJ) {
         let index1 = self.serialize(ij0);
@@ -96,7 +96,7 @@ impl<T> Matrix<T> {
 
 impl<T: Copy> Matrix<T> {
     pub fn get(&self, (i, j): IJ) -> Option<T> {
-        ((0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j))
+        ((0..self.rows as Index).contains(&i) && (0..self.cols as Index).contains(&j))
             .then(|| self[(i, j)])
     }
 }
@@ -104,7 +104,7 @@ impl<T: Copy> Matrix<T> {
 impl<T: PartialEq> Matrix<T> {
     pub fn position(&self, b: T) -> Option<IJ> {
         let index = self.array.iter().position(|b_| *b_ == b)?;
-        Some(((index / self.cols) as i32, (index % self.cols) as i32))
+        Some(((index / self.cols) as Index, (index % self.cols) as Index))
     }
 }
 
