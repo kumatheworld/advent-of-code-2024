@@ -1,12 +1,12 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, IJ};
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 
 advent_of_code::solution!(21);
 
 pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
-    let d2ks: HashMap<(i32, i32), [Vec<u8>; 2]> = iproduct!(-3..=3, -2..=2)
-        .map(|(di, dj): (i32, i32)| {
+    let d2ks: HashMap<IJ, [Vec<u8>; 2]> = iproduct!(-3..=3, -2..=2)
+        .map(|(di, dj): IJ| {
             ((di, dj), {
                 let is = vec![if di > 0 { b'v' } else { b'^' }; di.abs() as usize];
                 let js = vec![if dj > 0 { b'>' } else { b'<' }; dj.abs() as usize];

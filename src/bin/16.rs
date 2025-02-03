@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Matrix, DIJ, IJ};
 use itertools::{iproduct, Itertools};
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -9,13 +9,7 @@ fn between(a: i32, b: i32) -> std::ops::Range<i32> {
     std::cmp::min(a, b) + 1..std::cmp::max(a, b)
 }
 
-fn common(
-    input: &str,
-) -> (
-    (i32, i32),
-    Matrix<u8>,
-    HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
-) {
+fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
     const TURN_PENALTY: u32 = 1000;
     let linear = [vec![DIJ[0], DIJ[2]], vec![DIJ[1], DIJ[3]]];
 
@@ -35,7 +29,7 @@ fn common(
             }
         })
         .collect_vec();
-    let edges: HashMap<(i32, i32), Vec<((i32, i32), u32)>> = nodes
+    let edges: HashMap<IJ, Vec<(IJ, u32)>> = nodes
         .iter()
         .map(|&(i, j)| {
             let mat_ref = &mat;
@@ -62,7 +56,7 @@ fn common(
 
     // Dijkstra
     // (visited, distance, possible previous nodes that give the shortest path)
-    let mut dp: HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)> = nodes
+    let mut dp: HashMap<IJ, (bool, u32, Vec<IJ>)> = nodes
         .iter()
         .map(|&ij| (ij, (false, if ij == start { 0 } else { u32::MAX }, vec![])))
         .collect();
@@ -98,11 +92,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    fn traverse(
-        (i, j): (i32, i32),
-        seen: &mut Matrix<bool>,
-        dp: &HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
-    ) {
+    fn traverse((i, j): IJ, seen: &mut Matrix<bool>, dp: &HashMap<IJ, (bool, u32, Vec<IJ>)>) {
         seen[(i, j)] = true;
         for &(ii, jj) in &dp[&(i, j)].2 {
             if i == ii {

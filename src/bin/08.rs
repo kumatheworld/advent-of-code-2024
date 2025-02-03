@@ -1,4 +1,4 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, IJ};
 use itertools::{iproduct, iterate, Itertools};
 use std::collections::HashMap;
 
@@ -6,10 +6,10 @@ advent_of_code::solution!(8);
 
 fn common<F>(input: &str, yield_antennas: F) -> Option<u32>
 where
-    F: Fn((i32, i32), (i32, i32), &Matrix<u8>) -> Box<dyn Iterator<Item = (i32, i32)> + '_>,
+    F: Fn(IJ, IJ, &Matrix<u8>) -> Box<dyn Iterator<Item = IJ> + '_>,
 {
     let mat = Matrix::from(input);
-    let mut antennas: HashMap<u8, Vec<(i32, i32)>> = HashMap::new();
+    let mut antennas: HashMap<u8, Vec<IJ>> = HashMap::new();
     for (i, j) in mat.indices() {
         if mat[(i, j)] != b'.' {
             antennas

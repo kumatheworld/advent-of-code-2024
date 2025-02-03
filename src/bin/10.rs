@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Matrix, DIJ, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(10);
@@ -10,8 +10,7 @@ fn common(input: &str, apply_unique: bool) -> Option<u32> {
         mat.indices()
             .filter(|&(i, j)| mat[(i, j)] == b'0')
             .map(|(i0, j0)| {
-                let mut buf: Box<dyn Iterator<Item = (i32, i32)>> =
-                    Box::new(std::iter::once((i0, j0)));
+                let mut buf: Box<dyn Iterator<Item = IJ>> = Box::new(std::iter::once((i0, j0)));
                 for level in b'1'..=b'9' {
                     let mat_ref = &mat;
                     buf = Box::new(

@@ -1,6 +1,6 @@
 use core::unreachable;
 
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(15);
@@ -8,7 +8,7 @@ advent_of_code::solution!(15);
 fn common(
     input: &str,
     load_txt: fn(&str) -> Matrix<u8>,
-    push: fn(&mut Matrix<u8>, (i32, i32), (i32, i32), &Vec<u8>) -> (i32, i32),
+    push: fn(&mut Matrix<u8>, IJ, IJ, &Vec<u8>) -> IJ,
     box_bytes: Vec<u8>,
 ) -> Option<u32> {
     const MULTIPLIER: i32 = 100;
@@ -38,12 +38,7 @@ fn common(
     )
 }
 
-fn push_line(
-    mat: &mut Matrix<u8>,
-    (i, j): (i32, i32),
-    (di, dj): (i32, i32),
-    box_bytes: &Vec<u8>,
-) -> (i32, i32) {
+fn push_line(mat: &mut Matrix<u8>, (i, j): IJ, (di, dj): IJ, box_bytes: &Vec<u8>) -> IJ {
     let mut k = 1;
     loop {
         match mat[(i + k * di, j + k * dj)] {

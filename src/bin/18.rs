@@ -1,9 +1,9 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Matrix, DIJ, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(18);
 
-fn parse(input: &str) -> (Vec<(i32, i32)>, usize, usize) {
+fn parse(input: &str) -> (Vec<IJ>, usize, usize) {
     const BOUNDARY: usize = 100;
     let coordinates = input
         .lines()
@@ -22,7 +22,7 @@ fn parse(input: &str) -> (Vec<(i32, i32)>, usize, usize) {
     (coordinates, size, bytes)
 }
 
-fn distance(coordinates: &[(i32, i32)], size: usize) -> u32 {
+fn distance(coordinates: &[IJ], size: usize) -> u32 {
     let mut seen = Matrix::uniform(size, size, false);
     for &(x, y) in coordinates {
         seen[(y, x)] = true;
