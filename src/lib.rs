@@ -5,7 +5,8 @@ pub mod template;
 use itertools::{iproduct, Product};
 use std::fmt;
 
-type IJ = (i32, i32);
+type Index = i32;
+type IJ = (Index, Index);
 
 pub const DIJ: [IJ; 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
