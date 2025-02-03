@@ -5,7 +5,9 @@ pub mod template;
 use itertools::{iproduct, Product};
 use std::fmt;
 
-pub const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+type IJ = (i32, i32);
+
+pub const DIJ: [IJ; 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
 #[derive(Clone)]
 pub struct Matrix<T> {
@@ -69,7 +71,7 @@ impl Matrix<u8> {
 }
 
 impl<T> Matrix<T> {
-    fn serialize(&self, (i, j): (i32, i32)) -> usize {
+    fn serialize(&self, (i, j): IJ) -> usize {
         self.cols * i as usize + j as usize
     }
 
@@ -80,7 +82,7 @@ impl<T> Matrix<T> {
     pub fn inner_indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
         iproduct!(1..(self.rows - 1) as i32, 1..(self.cols - 1) as i32)
     }
-    pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
+    pub fn swap(&mut self, ij0: IJ, ij1: IJ) {
         let index1 = self.serialize(ij0);
         let index2 = self.serialize(ij1);
         self.array.swap(index1, index2);
@@ -92,29 +94,29 @@ impl<T> Matrix<T> {
 }
 
 impl<T: Copy> Matrix<T> {
-    pub fn get(&self, (i, j): (i32, i32)) -> Option<T> {
+    pub fn get(&self, (i, j): IJ) -> Option<T> {
         ((0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j))
             .then(|| self[(i, j)])
     }
 }
 
 impl<T: PartialEq> Matrix<T> {
-    pub fn position(&self, b: T) -> Option<(i32, i32)> {
+    pub fn position(&self, b: T) -> Option<IJ> {
         let index = self.array.iter().position(|b_| *b_ == b)?;
         Some(((index / self.cols) as i32, (index % self.cols) as i32))
     }
 }
 
-impl<T> std::ops::Index<(i32, i32)> for Matrix<T> {
+impl<T> std::ops::Index<IJ> for Matrix<T> {
     type Output = T;
 
-    fn index(&self, ij: (i32, i32)) -> &Self::Output {
+    fn index(&self, ij: IJ) -> &Self::Output {
         &self.array[self.serialize(ij)]
     }
 }
 
-impl<T> std::ops::IndexMut<(i32, i32)> for Matrix<T> {
-    fn index_mut(&mut self, ij: (i32, i32)) -> &mut Self::Output {
+impl<T> std::ops::IndexMut<IJ> for Matrix<T> {
+    fn index_mut(&mut self, ij: IJ) -> &mut Self::Output {
         &mut self.array[self.serialize(ij)]
     }
 }
