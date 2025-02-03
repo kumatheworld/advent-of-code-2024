@@ -8,8 +8,8 @@ fn safe1(levels: &Vec<i32>) -> bool {
         .tuple_windows()
         .map(|(m, n)| m - n)
         .collect_vec();
-    let inc = diff.iter().all(|d| 1 <= *d && *d <= 3);
-    let dec = diff.iter().all(|d| -3 <= *d && *d <= -1);
+    let inc = diff.iter().all(|&d| 1 <= d && d <= 3);
+    let dec = diff.iter().all(|&d| -3 <= d && d <= -1);
     inc || dec
 }
 
