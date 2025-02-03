@@ -1,6 +1,6 @@
 use core::unreachable;
 
-use advent_of_code::{Matrix, IJ};
+use advent_of_code::{Index, Matrix, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(15);
@@ -11,7 +11,7 @@ fn common(
     push: fn(&mut Matrix<u8>, IJ, IJ, &Vec<u8>) -> IJ,
     box_bytes: Vec<u8>,
 ) -> Option<u32> {
-    const MULTIPLIER: i32 = 100;
+    const MULTIPLIER: Index = 100;
 
     let (warehouse, directions) = input.split_once("\n\n").unwrap();
 

@@ -1,11 +1,11 @@
-use advent_of_code::{Matrix, IJ};
+use advent_of_code::{Index, Matrix, IJ};
 use itertools::iproduct;
 
 advent_of_code::solution!(6);
 
 fn patrol(mat: &mut Matrix<u8>, (i0, j0): IJ) -> Option<u32> {
-    const DI: [i32; 4] = [-1, 0, 1, 0];
-    const DJ: [i32; 4] = [0, 1, 0, -1];
+    const DI: [Index; 4] = [-1, 0, 1, 0];
+    const DJ: [Index; 4] = [0, 1, 0, -1];
     let mut d = 0;
     let mut i = i0;
     let mut j = j0;
@@ -47,7 +47,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     patrol(&mut mat1, (i0, j0));
 
     Some(
-        iproduct!(0..mat0.rows as i32, 0..mat0.cols as i32)
+        iproduct!(0..mat0.rows as Index, 0..mat0.cols as Index)
             .filter(|&(ii, jj)| {
                 mat1[(ii, jj)] == b'X' && (ii != i0 || jj != j0) && {
                     let mut mat = mat0.clone();

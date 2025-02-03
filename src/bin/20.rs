@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Index, Matrix, DIJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(20);
@@ -30,7 +30,7 @@ pub fn common(input: &str, picoseconds: u32) -> Option<u32> {
             .filter(|&((i0, j0), (i1, j1))| {
                 if let (Some(d0), Some(d1)) = (dist[(i0, j0)], dist[(i1, j1)]) {
                     let dij = i0.abs_diff(i1) + j0.abs_diff(j1);
-                    dij <= picoseconds && (d0 as i32).abs_diff(d1) >= SAVE + dij
+                    dij <= picoseconds && (d0 as Index).abs_diff(d1) >= SAVE + dij
                 } else {
                     false
                 }

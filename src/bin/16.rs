@@ -1,11 +1,11 @@
-use advent_of_code::{Matrix, DIJ, IJ};
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::{iproduct, Itertools};
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
 advent_of_code::solution!(16);
 
-fn between(a: i32, b: i32) -> std::ops::Range<i32> {
+fn between(a: Index, b: Index) -> std::ops::Range<Index> {
     std::cmp::min(a, b) + 1..std::cmp::max(a, b)
 }
 
@@ -14,11 +14,11 @@ fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
     let linear = [vec![DIJ[0], DIJ[2]], vec![DIJ[1], DIJ[3]]];
 
     let mat = Matrix::from(input);
-    let bottom = mat.rows as i32 - 2;
+    let bottom = mat.rows as Index - 2;
     let start = (bottom, 1);
-    let end = (1, mat.cols as i32 - 2);
+    let end = (1, mat.cols as Index - 2);
 
-    let nodes = iproduct!(0..mat.rows as i32 - 1, 0..mat.cols as i32 - 1)
+    let nodes = iproduct!(0..mat.rows as Index - 1, 0..mat.cols as Index - 1)
         .filter(|&(i, j)| {
             mat[(i, j)] != b'#' && {
                 let ds = DIJ

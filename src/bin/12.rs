@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Index, Matrix, DIJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(12);
@@ -42,9 +42,9 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                 perimeter
             } else {
                 let g = &groups;
-                (0..=mat.rows as i32)
+                (0..=mat.rows as Index)
                     .flat_map(|i| {
-                        (0..mat.cols as i32)
+                        (0..mat.cols as Index)
                             .map(move |j| {
                                 (g.get((i - 1, j)) == Some(Some(gid)))
                                     .cmp(&(g.get((i, j)) == Some(Some(gid))))
@@ -53,9 +53,9 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                     })
                     .filter(|&o| o.is_ne())
                     .count() as u32
-                    + (0..=mat.cols as i32)
+                    + (0..=mat.cols as Index)
                         .flat_map(|j| {
-                            (0..mat.rows as i32)
+                            (0..mat.rows as Index)
                                 .map(move |i| {
                                     (g.get((i, j - 1)) == Some(Some(gid)))
                                         .cmp(&(g.get((i, j)) == Some(Some(gid))))

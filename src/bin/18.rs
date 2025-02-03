@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ, IJ};
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(18);
@@ -9,7 +9,7 @@ fn parse(input: &str) -> (Vec<IJ>, usize, usize) {
         .lines()
         .map(|line| {
             let (x, y) = line.split_once(",").unwrap();
-            (x.parse::<i32>().unwrap(), y.parse::<i32>().unwrap())
+            (x.parse::<Index>().unwrap(), y.parse::<Index>().unwrap())
         })
         .collect_vec();
 
@@ -29,7 +29,7 @@ fn distance(coordinates: &[IJ], size: usize) -> u32 {
     }
 
     let start = (0, 0);
-    let end = (size as i32 - 1, size as i32 - 1);
+    let end = (size as Index - 1, size as Index - 1);
     let mut queue = vec![start];
     let mut k = 1;
     seen[start] = true;
