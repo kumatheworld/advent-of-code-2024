@@ -1,11 +1,9 @@
-use advent_of_code::{Index, Matrix, IJ};
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::iproduct;
 
 advent_of_code::solution!(6);
 
 fn patrol(mat: &mut Matrix<u8>, (i0, j0): IJ) -> Option<u32> {
-    const DI: [Index; 4] = [-1, 0, 1, 0];
-    const DJ: [Index; 4] = [0, 1, 0, -1];
     let mut d = 0;
     let mut i = i0;
     let mut j = j0;
@@ -14,16 +12,17 @@ fn patrol(mat: &mut Matrix<u8>, (i0, j0): IJ) -> Option<u32> {
     let mut sum = 1;
     // mat.rows * mat.cols times should be enough to see if there's a loop
     for _ in 0..mat.rows * mat.cols {
-        i += DI[d];
-        j += DJ[d];
+        let (di, dj) = DIJ[d];
+        i += di;
+        j += dj;
         match mat.get((i, j)) {
             Some(b'.') => {
                 sum += 1;
                 mat[(i, j)] = b'X';
             }
             Some(b'#') => {
-                i -= DI[d];
-                j -= DJ[d];
+                i -= di;
+                j -= dj;
                 d = (d + 1) % 4;
             }
             Some(b'X') => continue,
