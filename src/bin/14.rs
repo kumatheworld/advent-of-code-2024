@@ -1,9 +1,15 @@
 // use advent_of_code::Matrix;
+use advent_of_code::Index;
 use itertools::Itertools;
 
 advent_of_code::solution!(14);
 
-fn common(input: &str) -> ((i32, i32), impl Iterator<Item = (i32, i32, i32, i32)> + '_) {
+fn common(
+    input: &str,
+) -> (
+    (Index, Index),
+    impl Iterator<Item = (Index, Index, Index, Index)> + '_,
+) {
     const BOUNDARY: usize = 1000;
     let re = regex::Regex::new(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)$").unwrap();
 
@@ -18,7 +24,7 @@ fn common(input: &str) -> ((i32, i32), impl Iterator<Item = (i32, i32, i32, i32)
             .unwrap()
             .iter()
             .skip(1)
-            .map(|x| x.unwrap().as_str().parse::<i32>().unwrap())
+            .map(|x| x.unwrap().as_str().parse::<Index>().unwrap())
             .collect_tuple()
             .unwrap()
     });
@@ -27,7 +33,7 @@ fn common(input: &str) -> ((i32, i32), impl Iterator<Item = (i32, i32, i32, i32)
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    const SECONDS: i32 = 100;
+    const SECONDS: Index = 100;
     let ((rows, cols), ppvvs) = common(input);
 
     Some(

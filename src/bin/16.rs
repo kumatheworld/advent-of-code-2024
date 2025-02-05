@@ -1,53 +1,50 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::{iproduct, Itertools};
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
 advent_of_code::solution!(16);
 
-fn between(a: i32, b: i32) -> std::ops::Range<i32> {
+fn between(a: Index, b: Index) -> std::ops::Range<Index> {
     std::cmp::min(a, b) + 1..std::cmp::max(a, b)
 }
 
-fn common(
-    input: &str,
-) -> (
-    (i32, i32),
-    Matrix<u8>,
-    HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
-) {
+fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
     const TURN_PENALTY: u32 = 1000;
     let linear = [vec![DIJ[0], DIJ[2]], vec![DIJ[1], DIJ[3]]];
 
     let mat = Matrix::from(input);
-    let bottom = mat.rows as i32 - 2;
-    let start = (bottom, 1);
-    let end = (1, mat.cols as i32 - 2);
+    let bottom = mat.rows as Index - 2;
+    let start = IJ((bottom, 1));
+    let end = IJ((1, mat.cols as Index - 2));
 
-    let nodes = iproduct!(0..mat.rows as i32 - 1, 0..mat.cols as i32 - 1)
-        .filter(|&(i, j)| {
-            mat[(i, j)] != b'#' && {
+    let nodes = iproduct!(0..mat.rows as Index - 1, 0..mat.cols as Index - 1)
+        .map(IJ)
+        .filter(|&ij| {
+            mat[ij] != b'#' && {
                 let ds = DIJ
                     .into_iter()
-                    .filter(|(di, dj)| mat[(i + di, j + dj)] == b'.')
+                    .filter(|&dij| mat[ij + dij] == b'.')
                     .collect_vec();
                 !linear.contains(&ds)
             }
         })
         .collect_vec();
-    let edges: HashMap<(i32, i32), Vec<((i32, i32), u32)>> = nodes
+    let edges: HashMap<IJ, Vec<(IJ, u32)>> = nodes
         .iter()
-        .map(|&(i, j)| {
+        .map(|&ij| {
+            let IJ((i, j)) = ij;
             let mat_ref = &mat;
             let v = nodes
                 .iter()
-                .filter_map(move |&(ii, jj)| {
+                .filter_map(move |&iijj| {
+                    let IJ((ii, jj)) = iijj;
                     ((i != ii || j != jj)
-                        && (i == ii && between(j, jj).all(|jjj| mat_ref[(i, jjj)] == b'.')
-                            || j == jj && between(i, ii).all(|iii| mat_ref[(iii, j)] == b'.')))
+                        && (i == ii && between(j, jj).all(|jjj| mat_ref[IJ((i, jjj))] == b'.')
+                            || j == jj && between(i, ii).all(|iii| mat_ref[IJ((iii, j))] == b'.')))
                     .then(|| {
                         (
-                            (ii, jj),
+                            iijj,
                             (TURN_PENALTY
                                 * !(i == bottom && ii == bottom && [j, jj].contains(&1)) as u32
                                 + i.abs_diff(ii)
@@ -56,13 +53,13 @@ fn common(
                     })
                 })
                 .collect_vec();
-            ((i, j), v)
+            (ij, v)
         })
         .collect();
 
     // Dijkstra
     // (visited, distance, possible previous nodes that give the shortest path)
-    let mut dp: HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)> = nodes
+    let mut dp: HashMap<IJ, (bool, u32, Vec<IJ>)> = nodes
         .iter()
         .map(|&ij| (ij, (false, if ij == start { 0 } else { u32::MAX }, vec![])))
         .collect();
@@ -98,25 +95,23 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    fn traverse(
-        (i, j): (i32, i32),
-        seen: &mut Matrix<bool>,
-        dp: &HashMap<(i32, i32), (bool, u32, Vec<(i32, i32)>)>,
-    ) {
-        seen[(i, j)] = true;
-        for &(ii, jj) in &dp[&(i, j)].2 {
+    fn traverse(ij: IJ, seen: &mut Matrix<bool>, dp: &HashMap<IJ, (bool, u32, Vec<IJ>)>) {
+        let IJ((i, j)) = ij;
+        seen[ij] = true;
+        for &iijj in &dp[&ij].2 {
+            let IJ((ii, jj)) = iijj;
             if i == ii {
                 for jjj in between(j, jj) {
-                    seen[(i, jjj)] = true;
+                    seen[IJ((i, jjj))] = true;
                 }
             } else if j == jj {
                 for iii in between(i, ii) {
-                    seen[(iii, j)] = true;
+                    seen[IJ((iii, j))] = true;
                 }
             } else {
                 unreachable!();
             }
-            traverse((ii, jj), seen, dp);
+            traverse(iijj, seen, dp);
         }
     }
 

@@ -1,4 +1,4 @@
-use advent_of_code::{Matrix, DIJ};
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(12);
@@ -9,30 +9,28 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
 
     let mut sum = 0;
     let mut gid = 0;
-    for (i, j) in mat.indices() {
-        if groups[(i, j)].is_some() {
+    for ij in mat.indices() {
+        if groups[ij].is_some() {
             continue;
         }
 
-        groups[(i, j)] = Some(gid);
-        let mut stack = vec![(i, j)];
+        groups[ij] = Some(gid);
+        let mut stack = vec![ij];
         let mut area = 1;
         let mut perimeter = 4;
 
         while !stack.is_empty() {
-            let (ii, jj) = stack.pop().unwrap();
+            let iijj = stack.pop().unwrap();
             DIJ.iter()
-                .filter_map(|&(di, dj)| {
-                    (mat.get((ii + di, jj + dj)) == Some(mat[(i, j)])).then_some((ii + di, jj + dj))
-                })
-                .for_each(|(iii, jjj)| {
-                    if groups[(iii, jjj)].is_some() {
+                .filter_map(|&dij| (mat.get(iijj + dij) == Some(mat[ij])).then_some(iijj + dij))
+                .for_each(|iiijjj| {
+                    if groups[iiijjj].is_some() {
                         perimeter -= 1;
                     } else {
-                        groups[(iii, jjj)] = Some(gid);
+                        groups[iiijjj] = Some(gid);
                         area += 1;
                         perimeter += 3;
-                        stack.push((iii, jjj));
+                        stack.push(iiijjj);
                     }
                 });
         }
@@ -42,23 +40,23 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
                 perimeter
             } else {
                 let g = &groups;
-                (0..=mat.rows as i32)
+                (0..=mat.rows as Index)
                     .flat_map(|i| {
-                        (0..mat.cols as i32)
+                        (0..mat.cols as Index)
                             .map(move |j| {
-                                (g.get((i - 1, j)) == Some(Some(gid)))
-                                    .cmp(&(g.get((i, j)) == Some(Some(gid))))
+                                (g.get(IJ((i - 1, j))) == Some(Some(gid)))
+                                    .cmp(&(g.get(IJ((i, j))) == Some(Some(gid))))
                             })
                             .dedup()
                     })
                     .filter(|&o| o.is_ne())
                     .count() as u32
-                    + (0..=mat.cols as i32)
+                    + (0..=mat.cols as Index)
                         .flat_map(|j| {
-                            (0..mat.rows as i32)
+                            (0..mat.rows as Index)
                                 .map(move |i| {
-                                    (g.get((i, j - 1)) == Some(Some(gid)))
-                                        .cmp(&(g.get((i, j)) == Some(Some(gid))))
+                                    (g.get(IJ((i, j - 1))) == Some(Some(gid)))
+                                        .cmp(&(g.get(IJ((i, j))) == Some(Some(gid))))
                                 })
                                 .dedup()
                         })

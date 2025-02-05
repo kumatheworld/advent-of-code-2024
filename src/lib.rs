@@ -2,10 +2,69 @@ pub mod template;
 
 // Use this file to add helper functions and additional modules.
 
-use itertools::{iproduct, Product};
+use itertools::iproduct;
 use std::fmt;
+use std::ops;
 
-pub const DIJ: [(i32, i32); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+pub type Index = i32;
+
+#[derive(Clone, Copy, Eq, Hash, PartialEq)]
+pub struct IJ(pub (Index, Index));
+pub const DIJ: [IJ; 4] = [IJ((-1, 0)), IJ((0, 1)), IJ((1, 0)), IJ((0, -1))];
+
+impl ops::Neg for IJ {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        let IJ((i, j)) = self;
+        Self { 0: (-i, -j) }
+    }
+}
+
+impl ops::AddAssign for IJ {
+    fn add_assign(&mut self, other: Self) {
+        let IJ((i0, j0)) = self;
+        let IJ((i1, j1)) = other;
+        *self = Self {
+            0: (*i0 + i1, *j0 + j1),
+        }
+    }
+}
+
+impl ops::Add for IJ {
+    type Output = Self;
+
+    fn add(mut self, other: Self) -> Self {
+        self += other;
+        self
+    }
+}
+
+impl ops::Mul<IJ> for Index {
+    type Output = IJ;
+
+    fn mul(self, other: IJ) -> IJ {
+        let IJ((i, j)) = other;
+        IJ {
+            0: (self * i, self * j),
+        }
+    }
+}
+
+impl ops::SubAssign for IJ {
+    fn sub_assign(&mut self, other: Self) {
+        *self += -other
+    }
+}
+
+impl ops::Sub for IJ {
+    type Output = Self;
+
+    fn sub(mut self, other: Self) -> Self {
+        self -= other;
+        self
+    }
+}
 
 #[derive(Clone)]
 pub struct Matrix<T> {
@@ -69,18 +128,18 @@ impl Matrix<u8> {
 }
 
 impl<T> Matrix<T> {
-    fn serialize(&self, (i, j): (i32, i32)) -> usize {
+    fn serialize(&self, IJ((i, j)): IJ) -> usize {
         self.cols * i as usize + j as usize
     }
 
-    pub fn indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
-        iproduct!(0..self.rows as i32, 0..self.cols as i32)
+    pub fn indices(&self) -> impl Iterator<Item = IJ> + Clone {
+        iproduct!(0..self.rows as Index, 0..self.cols as Index).map(IJ)
     }
 
-    pub fn inner_indices(&self) -> Product<std::ops::Range<i32>, std::ops::Range<i32>> {
-        iproduct!(1..(self.rows - 1) as i32, 1..(self.cols - 1) as i32)
+    pub fn inner_indices(&self) -> impl Iterator<Item = IJ> + Clone {
+        iproduct!(1..(self.rows - 1) as Index, 1..(self.cols - 1) as Index).map(IJ)
     }
-    pub fn swap(&mut self, ij0: (i32, i32), ij1: (i32, i32)) {
+    pub fn swap(&mut self, ij0: IJ, ij1: IJ) {
         let index1 = self.serialize(ij0);
         let index2 = self.serialize(ij1);
         self.array.swap(index1, index2);
@@ -92,29 +151,32 @@ impl<T> Matrix<T> {
 }
 
 impl<T: Copy> Matrix<T> {
-    pub fn get(&self, (i, j): (i32, i32)) -> Option<T> {
-        ((0..self.rows as i32).contains(&i) && (0..self.cols as i32).contains(&j))
-            .then(|| self[(i, j)])
+    pub fn get(&self, IJ((i, j)): IJ) -> Option<T> {
+        ((0..self.rows as Index).contains(&i) && (0..self.cols as Index).contains(&j))
+            .then(|| self[IJ((i, j))])
     }
 }
 
 impl<T: PartialEq> Matrix<T> {
-    pub fn position(&self, b: T) -> Option<(i32, i32)> {
+    pub fn position(&self, b: T) -> Option<IJ> {
         let index = self.array.iter().position(|b_| *b_ == b)?;
-        Some(((index / self.cols) as i32, (index % self.cols) as i32))
+        Some(IJ((
+            (index / self.cols) as Index,
+            (index % self.cols) as Index,
+        )))
     }
 }
 
-impl<T> std::ops::Index<(i32, i32)> for Matrix<T> {
+impl<T> ops::Index<IJ> for Matrix<T> {
     type Output = T;
 
-    fn index(&self, ij: (i32, i32)) -> &Self::Output {
+    fn index(&self, ij: IJ) -> &Self::Output {
         &self.array[self.serialize(ij)]
     }
 }
 
-impl<T> std::ops::IndexMut<(i32, i32)> for Matrix<T> {
-    fn index_mut(&mut self, ij: (i32, i32)) -> &mut Self::Output {
+impl<T> ops::IndexMut<IJ> for Matrix<T> {
+    fn index_mut(&mut self, ij: IJ) -> &mut Self::Output {
         &mut self.array[self.serialize(ij)]
     }
 }

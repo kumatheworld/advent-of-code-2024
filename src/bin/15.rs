@@ -1,6 +1,6 @@
 use core::unreachable;
 
-use advent_of_code::Matrix;
+use advent_of_code::{Index, Matrix, DIJ, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(15);
@@ -8,10 +8,10 @@ advent_of_code::solution!(15);
 fn common(
     input: &str,
     load_txt: fn(&str) -> Matrix<u8>,
-    push: fn(&mut Matrix<u8>, (i32, i32), (i32, i32), &Vec<u8>) -> (i32, i32),
+    push: fn(&mut Matrix<u8>, IJ, IJ, &Vec<u8>) -> IJ,
     box_bytes: Vec<u8>,
 ) -> Option<u32> {
-    const MULTIPLIER: i32 = 100;
+    const MULTIPLIER: Index = 100;
 
     let (warehouse, directions) = input.split_once("\n\n").unwrap();
 
@@ -19,10 +19,10 @@ fn common(
     let mut ij = mat.position(b'@').unwrap();
 
     let directions = directions.chars().filter_map(|c| match c {
-        '^' => Some((-1, 0)),
-        '>' => Some((0, 1)),
-        'v' => Some((1, 0)),
-        '<' => Some((0, -1)),
+        '^' => Some(DIJ[0]),
+        '>' => Some(DIJ[1]),
+        'v' => Some(DIJ[2]),
+        '<' => Some(DIJ[3]),
         '\n' => None,
         _ => unreachable!(),
     });
@@ -33,33 +33,31 @@ fn common(
 
     Some(
         mat.indices()
-            .filter_map(|(i, j)| (mat[(i, j)] == box_bytes[0]).then(|| (MULTIPLIER * i + j) as u32))
+            .filter_map(|ij| {
+                let IJ((i, j)) = ij;
+                (mat[ij] == box_bytes[0]).then(|| (MULTIPLIER * i + j) as u32)
+            })
             .sum(),
     )
 }
 
-fn push_line(
-    mat: &mut Matrix<u8>,
-    (i, j): (i32, i32),
-    (di, dj): (i32, i32),
-    box_bytes: &Vec<u8>,
-) -> (i32, i32) {
+fn push_line(mat: &mut Matrix<u8>, ij: IJ, dij: IJ, box_bytes: &Vec<u8>) -> IJ {
     let mut k = 1;
     loop {
-        match mat[(i + k * di, j + k * dj)] {
+        match mat[ij + k * dij] {
             b'.' => break,
             b if box_bytes.contains(&b) => (),
-            b'#' => return (i, j),
+            b'#' => return ij,
             _ => unreachable!(),
         }
         k += 1;
     }
 
     for (k0, k1) in (0..=k).rev().tuple_windows() {
-        mat.swap((i + k0 * di, j + k0 * dj), (i + k1 * di, j + k1 * dj));
+        mat.swap(ij + k0 * dij, ij + k1 * dij);
     }
 
-    (i + di, j + dj)
+    ij + dij
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -87,9 +85,11 @@ pub fn part_two(input: &str) -> Option<u32> {
             let cols = array.len() / rows;
             Matrix { array, rows, cols }
         },
-        |mat, (i, j), (di, dj), box_bytes| {
+        |mat, ij, dij, box_bytes| {
+            let IJ((i, j)) = ij;
+            let IJ((di, _)) = dij;
             if di == 0 {
-                push_line(mat, (i, j), (di, dj), box_bytes)
+                push_line(mat, ij, dij, box_bytes)
             } else {
                 let mut jss = vec![];
                 let mut k = 1;
@@ -99,7 +99,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     jss.push(js.clone());
                     let mut js2 = vec![];
                     for jj in js.into_iter() {
-                        match mat.get((i + k * di, jj)) {
+                        match mat.get(IJ((i + k * di, jj))) {
                             Some(b'.') => (),
                             Some(b'[') => js2.extend([jj, jj + 1].iter()),
                             Some(b']') => {
@@ -107,7 +107,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                                     js2.extend([jj - 1, jj].iter())
                                 }
                             }
-                            Some(b'#') => return (i, j),
+                            Some(b'#') => return ij,
                             _ => unreachable!(),
                         }
                     }
@@ -119,11 +119,11 @@ pub fn part_two(input: &str) -> Option<u32> {
                 for js in jss.into_iter().rev() {
                     ii -= di;
                     for jj in js {
-                        mat.swap((ii - di, jj), (ii, jj));
+                        mat.swap(IJ((ii - di, jj)), IJ((ii, jj)));
                     }
                 }
 
-                (ii, j)
+                IJ((ii, j))
             }
         },
         vec![b'[', b']'],

@@ -1,4 +1,4 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, IJ};
 use itertools::{iproduct, iterate, Itertools};
 use std::collections::HashMap;
 
@@ -6,16 +6,13 @@ advent_of_code::solution!(8);
 
 fn common<F>(input: &str, yield_antennas: F) -> Option<u32>
 where
-    F: Fn((i32, i32), (i32, i32), &Matrix<u8>) -> Box<dyn Iterator<Item = (i32, i32)> + '_>,
+    F: Fn(IJ, IJ, &Matrix<u8>) -> Box<dyn Iterator<Item = IJ> + '_>,
 {
     let mat = Matrix::from(input);
-    let mut antennas: HashMap<u8, Vec<(i32, i32)>> = HashMap::new();
-    for (i, j) in mat.indices() {
-        if mat[(i, j)] != b'.' {
-            antennas
-                .entry(mat[(i, j)])
-                .or_insert_with(Vec::new)
-                .push((i, j));
+    let mut antennas: HashMap<u8, Vec<IJ>> = HashMap::new();
+    for ij in mat.indices() {
+        if mat[ij] != b'.' {
+            antennas.entry(mat[ij]).or_insert_with(Vec::new).push(ij);
         }
     }
 
@@ -25,7 +22,7 @@ where
             .flat_map(|(_, v)| {
                 iproduct!(v, v)
                     .filter(|(p, q)| p != q)
-                    .flat_map(|(&(i0, j0), &(i1, j1))| yield_antennas((i0, j0), (i1, j1), &mat))
+                    .flat_map(|(&ij0, &ij1)| yield_antennas(ij0, ij1, &mat))
             })
             .unique()
             .count() as u32,
@@ -33,18 +30,15 @@ where
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    common(input, |(i0, j0), (i1, j1), mat| {
-        let ij2 = (2 * i1 - i0, 2 * j1 - j0);
+    common(input, |ij0, ij1, mat| {
+        let ij2 = 2 * ij1 - ij0;
         Box::new(mat.get(ij2).is_some().then_some(ij2).into_iter())
     })
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    common(input, |(i0, j0), (i1, j1), mat| {
-        Box::new(
-            iterate((i1, j1), move |(i, j)| (i + i1 - i0, j + j1 - j0))
-                .take_while(|&ij| mat.get(ij).is_some()),
-        )
+    common(input, |ij0, ij1, mat| {
+        Box::new(iterate(ij1, move |&ij| ij + ij1 - ij0).take_while(|&ij| mat.get(ij).is_some()))
     })
 }
 

@@ -1,13 +1,13 @@
-use advent_of_code::Matrix;
+use advent_of_code::{Matrix, IJ};
 use itertools::{iproduct, Itertools};
 use std::collections::HashMap;
 
 advent_of_code::solution!(21);
 
 pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
-    let d2ks: HashMap<(i32, i32), [Vec<u8>; 2]> = iproduct!(-3..=3, -2..=2)
-        .map(|(di, dj): (i32, i32)| {
-            ((di, dj), {
+    let d2ks: HashMap<IJ, [Vec<u8>; 2]> = iproduct!(-3..=3, -2..=2)
+        .map(|(di, dj)| {
+            (IJ((di, dj)), {
                 let is = vec![if di > 0 { b'v' } else { b'^' }; di.abs() as usize];
                 let js = vec![if dj > 0 { b'>' } else { b'<' }; dj.abs() as usize];
                 let a = vec![b'A'];
@@ -17,10 +17,10 @@ pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
         .collect();
 
     let get_directions = move |(a, b): (u8, u8), keymap: &Matrix<u8>| {
-        let (ai, aj) = keymap.position(a).unwrap();
-        let (bi, bj) = keymap.position(b).unwrap();
-        let ds = d2ks.get(&(bi - ai, bj - aj)).unwrap();
-        match (keymap.get((bi, aj)), keymap.get((ai, bj))) {
+        let IJ((ai, aj)) = keymap.position(a).unwrap();
+        let IJ((bi, bj)) = keymap.position(b).unwrap();
+        let ds = d2ks.get(&IJ((bi - ai, bj - aj))).unwrap();
+        match (keymap.get(IJ((bi, aj))), keymap.get(IJ((ai, bj)))) {
             (Some(b' '), Some(_)) => ds[1].clone(),
             (Some(_), Some(b' ')) => ds[0].clone(),
             (Some(_), Some(_)) => ds[(aj > bj) as usize].clone(), // This turns out working
