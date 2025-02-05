@@ -9,7 +9,7 @@ fn parse(input: &str) -> (Vec<IJ>, usize, usize) {
         .lines()
         .map(|line| {
             let (x, y) = line.split_once(",").unwrap();
-            (x.parse::<Index>().unwrap(), y.parse::<Index>().unwrap())
+            IJ((x.parse::<Index>().unwrap(), y.parse::<Index>().unwrap()))
         })
         .collect_vec();
 
@@ -24,20 +24,20 @@ fn parse(input: &str) -> (Vec<IJ>, usize, usize) {
 
 fn distance(coordinates: &[IJ], size: usize) -> u32 {
     let mut seen = Matrix::uniform(size, size, false);
-    for &(x, y) in coordinates {
-        seen[(y, x)] = true;
+    for &IJ((x, y)) in coordinates {
+        seen[IJ((y, x))] = true;
     }
 
-    let start = (0, 0);
-    let end = (size as Index - 1, size as Index - 1);
+    let start = IJ((0, 0));
+    let end = IJ((size as Index - 1, size as Index - 1));
     let mut queue = vec![start];
     let mut k = 1;
     seen[start] = true;
     while !queue.is_empty() {
         let mut q = vec![];
-        for (i, j) in queue {
-            for (di, dj) in DIJ {
-                let iijj = (i + di, j + dj);
+        for ij in queue {
+            for dij in DIJ {
+                let iijj = ij + dij;
                 if iijj == end {
                     return k;
                 }
@@ -64,7 +64,7 @@ pub fn part_two(input: &str) -> Option<String> {
         + (bytes + 1..coordinates.len())
             .collect_vec()
             .partition_point(|&b| distance(&coordinates[..b], size) < u32::MAX);
-    let (i, j) = coordinates[k];
+    let IJ((i, j)) = coordinates[k];
     Some(format!("{},{}", i, j))
 }
 

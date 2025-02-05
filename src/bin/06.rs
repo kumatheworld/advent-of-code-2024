@@ -1,28 +1,23 @@
-use advent_of_code::{Index, Matrix, DIJ, IJ};
-use itertools::iproduct;
+use advent_of_code::{Matrix, DIJ, IJ};
 
 advent_of_code::solution!(6);
 
-fn patrol(mat: &mut Matrix<u8>, (i0, j0): IJ) -> Option<u32> {
+fn patrol(mat: &mut Matrix<u8>, ij0: IJ) -> Option<u32> {
     let mut d = 0;
-    let mut i = i0;
-    let mut j = j0;
+    let mut ij = ij0;
 
-    mat[(i, j)] = b'X';
+    mat[ij] = b'X';
     let mut sum = 1;
     // mat.rows * mat.cols times should be enough to see if there's a loop
     for _ in 0..mat.rows * mat.cols {
-        let (di, dj) = DIJ[d];
-        i += di;
-        j += dj;
-        match mat.get((i, j)) {
+        ij += DIJ[d];
+        match mat.get(ij) {
             Some(b'.') => {
                 sum += 1;
-                mat[(i, j)] = b'X';
+                mat[ij] = b'X';
             }
             Some(b'#') => {
-                i -= di;
-                j -= dj;
+                ij -= DIJ[d];
                 d = (d + 1) % 4;
             }
             Some(b'X') => continue,
@@ -41,17 +36,19 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mat0 = Matrix::from(input);
-    let (i0, j0) = mat0.position(b'^').unwrap();
+    let ij0 = mat0.position(b'^').unwrap();
     let mut mat1 = mat0.clone();
-    patrol(&mut mat1, (i0, j0));
+    patrol(&mut mat1, ij0);
 
+    let IJ((i0, j0)) = ij0;
     Some(
-        iproduct!(0..mat0.rows as Index, 0..mat0.cols as Index)
-            .filter(|&(ii, jj)| {
-                mat1[(ii, jj)] == b'X' && (ii != i0 || jj != j0) && {
+        mat0.indices()
+            .filter(|&ij| {
+                let IJ((i, j)) = ij;
+                mat1[ij] == b'X' && (i != i0 || j != j0) && {
                     let mut mat = mat0.clone();
-                    mat[(ii, jj)] = b'#';
-                    patrol(&mut mat, (i0, j0)).is_none()
+                    mat[ij] = b'#';
+                    patrol(&mut mat, ij0).is_none()
                 }
             })
             .count() as u32,
