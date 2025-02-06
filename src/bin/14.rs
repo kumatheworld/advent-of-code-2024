@@ -81,6 +81,10 @@ pub fn part_two(_: &str) -> Option<u32> {
     // but it's hindsight because the tree could conceivably have been incomplete,
     // potentially lacking some "pixel"s.
 
+    // There are some other ideas:
+    // * Calculate the "randomness" or "entropy" of the matrix by a sliding window-style n-gram or something.
+    // * Calculate the number of connected components.
+
     Some(7055)
 }
 
