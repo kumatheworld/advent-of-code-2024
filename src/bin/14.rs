@@ -79,7 +79,7 @@ pub fn part_two(_: &str) -> Option<u32> {
     // and coincidentally saw a tree at 7,055 seconds.
     // I could have searched for something like a 4x4 grid of true values,
     // but it's hindsight because the tree could conceivably have been incomplete,
-    // potentially lacking some 'pixel's.
+    // potentially lacking some "pixel"s.
 
     Some(7055)
 }
