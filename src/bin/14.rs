@@ -1,5 +1,5 @@
-// use advent_of_code::Matrix;
 use advent_of_code::Index;
+// use advent_of_code::{Matrix, IJ};
 use itertools::Itertools;
 
 advent_of_code::solution!(14);
@@ -63,7 +63,7 @@ pub fn part_two(_: &str) -> Option<u32> {
     //         cols: cols as usize,
     //     };
     //     for ((px, py), (vx, vy)) in pps.iter_mut().zip(&vvs) {
-    //         mat[(*py, *px)] = true;
+    //         mat[IJ((*py, *px))] = true;
     //         *px = (*px + vx).rem_euclid(cols);
     //         *py = (*py + vy).rem_euclid(rows);
     //     }
