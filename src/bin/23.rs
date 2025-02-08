@@ -68,7 +68,7 @@ pub fn part_two(input: &str) -> Option<String> {
             })
             .max_by_key(|us| us.len())?
             .into_iter()
-            .sorted()
+            .sorted_unstable()
             .flat_map(|v| String::from_utf8(v.to_vec()))
             .join(","),
     )

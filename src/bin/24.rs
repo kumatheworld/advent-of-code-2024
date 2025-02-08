@@ -57,7 +57,7 @@ pub fn part_one(input: &str) -> Option<u64> {
         wires
             .iter()
             .filter(|(w, _)| w.as_bytes()[0] == b'z')
-            .sorted()
+            .sorted_unstable()
             .enumerate()
             .fold(
                 0,
