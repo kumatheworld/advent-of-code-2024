@@ -1,16 +1,16 @@
-use itertools::Itertools;
+use itertools::{iterate, Itertools};
 use std::collections::HashMap;
 
 advent_of_code::solution!(22);
 
 const REPS: usize = 2000;
 
-fn next_secret(ref_n: &mut u64) -> u64 {
-    let mut n = *ref_n;
+// Credit: https://www.reddit.com/r/adventofcode/comments/1hjroap/comment/m390cfi/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+fn step(n: &u64) -> u64 {
+    let mut n = *n;
     n = ((n << 6) ^ n) & 0xffffff;
     n = ((n >> 5) ^ n) & 0xffffff;
     n = ((n << 11) ^ n) & 0xffffff;
-    *ref_n = n;
     n
 }
 
@@ -18,13 +18,7 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(
         input
             .lines()
-            .map(|line| {
-                let mut n = line.parse::<u64>().unwrap();
-                for _ in 0..REPS {
-                    next_secret(&mut n);
-                }
-                n
-            })
+            .map(|p| iterate(p.parse::<u64>().unwrap(), step).nth(REPS).unwrap())
             .sum(),
     )
 }
@@ -33,9 +27,9 @@ pub fn part_two(input: &str) -> Option<u16> {
     input
         .lines()
         .map(|line| {
-            let mut n = line.parse::<u64>().unwrap();
-            let prices = std::iter::once((n % 10) as i8)
-                .chain((0..REPS).map(move |_| (next_secret(&mut n) % 10) as i8))
+            let prices = iterate(line.parse::<u64>().unwrap(), step)
+                .take(1 + REPS)
+                .map(|n| (n % 10) as i8)
                 .collect_vec();
 
             let mut changes_and_prices = HashMap::new();
