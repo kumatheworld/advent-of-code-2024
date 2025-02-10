@@ -7,9 +7,9 @@ const REPS: usize = 2000;
 
 fn next_secret(ref_n: &mut u64) -> u64 {
     let mut n = *ref_n;
-    n = ((n << 6) ^ n) & 16777215;
-    n = ((n >> 5) ^ n) & 16777215;
-    n = ((n << 11) ^ n) & 16777215;
+    n = ((n << 6) ^ n) & 0xffffff;
+    n = ((n >> 5) ^ n) & 0xffffff;
+    n = ((n << 11) ^ n) & 0xffffff;
     *ref_n = n;
     n
 }
