@@ -48,14 +48,14 @@ pub fn part_two(input: &str) -> Option<String> {
                     .rev()
                     .filter(|ws| {
                         let ws_set: HashSet<[u8; 2]> =
-                            HashSet::from_iter(ws.clone().into_iter().map(|&w| w));
+                            HashSet::from_iter(ws.clone().into_iter().copied());
                         ws.into_iter().all(|&&w| {
                             ws_set.is_subset(
                                 &graph
                                     .get(&w)
                                     .unwrap()
                                     .union(&HashSet::from([w]))
-                                    .map(|&w| w)
+                                    .copied()
                                     .collect(),
                             )
                         })
