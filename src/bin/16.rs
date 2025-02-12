@@ -70,7 +70,7 @@ fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
             return (end, mat, dp);
         }
         dp.get_mut(&u).unwrap().0 = true;
-        for &(v, weight) in edges[&u].iter() {
+        for (v, weight) in &edges[&u] {
             let (_, dd, ps) = dp.get_mut(&v).unwrap();
             match (d + weight).cmp(dd) {
                 Ordering::Less => {
