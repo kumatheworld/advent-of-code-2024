@@ -91,16 +91,14 @@ pub fn part_two(input: &str) -> Option<u64> {
                 None => Some(a),
                 Some((&last, rest)) => {
                     let a8 = a << 3;
-                    (0..8)
-                        .filter_map(|m| {
-                            let a8m = a8 + m as u64;
-                            if (n1 ^ n3 ^ m ^ ((a8m >> (n1 ^ m)) & 7) as u8) == last {
-                                search(a8m as u64, n1, n3, rest)
-                            } else {
-                                None
-                            }
-                        })
-                        .next()
+                    (0..8).find_map(|m| {
+                        let a8m = a8 + m as u64;
+                        if (n1 ^ n3 ^ m ^ ((a8m >> (n1 ^ m)) & 7) as u8) == last {
+                            search(a8m as u64, n1, n3, rest)
+                        } else {
+                            None
+                        }
+                    })
                 }
             }
         }
