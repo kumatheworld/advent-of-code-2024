@@ -75,7 +75,7 @@ fn common(
 
 pub fn part_one(input: &str) -> Option<String> {
     let (mut executor, program) = common(input);
-    Some(executor(program, None).map(|n| n.to_string()).join(","))
+    Some(executor(program, None).map(|n| format!("{n}")).join(","))
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
