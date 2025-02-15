@@ -28,14 +28,12 @@ pub fn common(input: &str, picoseconds: u32) -> Option<u32> {
         dist.inner_indices()
             .tuple_combinations()
             .filter(|&(ij0, ij1)| {
-                if let (Some(d0), Some(d1)) = (dist[ij0], dist[ij1]) {
+                dist[ij0].zip(dist[ij1]).map_or(false, |(d0, d1)| {
                     let IJ((i0, j0)) = ij0;
                     let IJ((i1, j1)) = ij1;
                     let dij = i0.abs_diff(i1) + j0.abs_diff(j1);
                     dij <= picoseconds && (d0 as Index).abs_diff(d1) >= SAVE + dij
-                } else {
-                    false
-                }
+                })
             })
             .count() as u32,
     )
