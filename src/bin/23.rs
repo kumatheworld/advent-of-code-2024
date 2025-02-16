@@ -8,8 +8,8 @@ fn build_graph(input: &str) -> HashMap<[u8; 2], HashSet<[u8; 2]>> {
     let mut graph = HashMap::<[u8; 2], HashSet<[u8; 2]>>::new();
     for line in input.lines() {
         let (u, v) = line.split_once('-').unwrap();
-        let u = <[u8; 2]>::try_from(u.as_bytes()).unwrap();
-        let v = <[u8; 2]>::try_from(v.as_bytes()).unwrap();
+        let u = u.as_bytes().try_into().unwrap();
+        let v = v.as_bytes().try_into().unwrap();
         graph.entry(u).or_default().insert(v);
         graph.entry(v).or_default().insert(u);
     }
