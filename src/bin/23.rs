@@ -46,7 +46,7 @@ pub fn part_two(input: &str) -> Option<String> {
                     .collect_vec()
                     .into_iter()
                     .rev()
-                    .filter(|ws| {
+                    .find(|ws| {
                         let ws_set: HashSet<[u8; 2]> =
                             HashSet::from_iter(ws.clone().into_iter().copied());
                         ws.into_iter().all(|&&w| {
@@ -60,7 +60,6 @@ pub fn part_two(input: &str) -> Option<String> {
                             )
                         })
                     })
-                    .next()
                     .unwrap()
                     .into_iter()
                     .chain([u])
