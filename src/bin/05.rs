@@ -15,7 +15,7 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
                 .unwrap()
         })
         .for_each(|(m, n)| {
-            one2many.entry(m).or_insert_with(HashSet::new).insert(n);
+            one2many.entry(m).or_default().insert(n);
         });
 
     Some(
