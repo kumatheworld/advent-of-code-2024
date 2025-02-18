@@ -28,8 +28,7 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
                     .collect_vec();
 
                 // Count the number of subsequent pages for every page
-                // It is a permutation of 0..pages.len() thanks to the fact that p|p does not hold
-                // and that either one of p|q or q|p holds for each distinct pair (p, q) of pages
+                // It is a permutation of 0..pages.len() thanks to irreflexiveness and anti-symmetry
                 let num_next_pages = pages
                     .iter()
                     .map(|p| {
