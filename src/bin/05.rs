@@ -7,16 +7,12 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
     let (rules, updates) = input.split_once("\n\n").unwrap();
 
     let mut one2many: HashMap<u32, HashSet<u32>> = HashMap::new();
-    rules
-        .lines()
-        .map(|line| {
-            line.split_once('|')
-                .map(|(m, n)| (m.parse::<u32>().unwrap(), n.parse::<u32>().unwrap()))
-                .unwrap()
-        })
-        .for_each(|(m, n)| {
-            one2many.entry(m).or_default().insert(n);
-        });
+    for line in rules.lines() {
+        let (p, q) = line.split_once('|').unwrap();
+        let p = p.parse().unwrap();
+        let q = q.parse().unwrap();
+        one2many.entry(p).or_default().insert(q);
+    }
 
     Some(
         updates
