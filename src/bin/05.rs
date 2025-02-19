@@ -11,7 +11,7 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
         let (p, q) = line.split_once('|').unwrap();
         let p = p.parse().unwrap();
         let q = q.parse().unwrap();
-        one2many.entry(p).or_default().insert(q);
+        one2many.entry(q).or_default().insert(p);
     }
 
     Some(
@@ -23,9 +23,9 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
                     .map(|elem| elem.parse::<u32>().unwrap())
                     .collect_vec();
 
-                // Count the number of subsequent pages for every page
+                // Count the number of previous pages for every page
                 // It is a permutation of 0..pages.len() thanks to irreflexiveness and anti-symmetry
-                let num_next_pages = pages
+                let num_prev_pages = pages
                     .iter()
                     .map(|p| {
                         pages
@@ -37,12 +37,12 @@ fn common(input: &str, ok_or_err: fn(Result<u32, u32>) -> Option<u32>) -> Option
                     })
                     .collect_vec();
 
-                let mid = pages[num_next_pages
+                let mid = pages[num_prev_pages
                     .iter()
                     .position(|&i| i == pages.len() >> 1)
                     .unwrap()];
 
-                (if num_next_pages == (0..pages.len()).rev().collect_vec() {
+                (if num_prev_pages == (0..pages.len()).collect_vec() {
                     Ok
                 } else {
                     Err
