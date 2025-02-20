@@ -21,8 +21,8 @@ fn common(input: &str, use_perimeter: bool) -> Option<u32> {
 
         while !stack.is_empty() {
             let iijj = stack.pop().unwrap();
-            DIJ.iter()
-                .filter_map(|&dij| (mat.get(iijj + dij) == Some(mat[ij])).then_some(iijj + dij))
+            DIJ.into_iter()
+                .filter_map(|dij| (mat.get(iijj + dij) == Some(mat[ij])).then_some(iijj + dij))
                 .for_each(|iiijjj| {
                     if groups[iiijjj].is_some() {
                         perimeter -= 1;

@@ -22,11 +22,8 @@ fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
         .map(IJ)
         .filter(|&ij| {
             mat[ij] != b'#' && {
-                let ds = DIJ
-                    .into_iter()
-                    .filter(|&dij| mat[ij + dij] == b'.')
-                    .collect_vec();
-                !linear.contains(&ds)
+                let mut ds = DIJ.into_iter().filter(|&dij| mat[ij + dij] == b'.');
+                !ds.any(|d| linear.contains(&vec![d]))
             }
         })
         .collect_vec();
@@ -73,7 +70,7 @@ fn common(input: &str) -> (IJ, Matrix<u8>, HashMap<IJ, (bool, u32, Vec<IJ>)>) {
             return (end, mat, dp);
         }
         dp.get_mut(&u).unwrap().0 = true;
-        for &(v, weight) in edges[&u].iter() {
+        for (v, weight) in &edges[&u] {
             let (_, dd, ps) = dp.get_mut(&v).unwrap();
             match (d + weight).cmp(dd) {
                 Ordering::Less => {

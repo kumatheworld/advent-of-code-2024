@@ -9,7 +9,7 @@ fn parse(input: &str) -> (Vec<IJ>, usize, usize) {
         .lines()
         .map(|line| {
             let (x, y) = line.split_once(",").unwrap();
-            IJ((x.parse::<Index>().unwrap(), y.parse::<Index>().unwrap()))
+            IJ((x.parse().unwrap(), y.parse().unwrap()))
         })
         .collect_vec();
 

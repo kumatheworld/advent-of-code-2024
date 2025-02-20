@@ -8,8 +8,8 @@ fn build_graph(input: &str) -> HashMap<[u8; 2], HashSet<[u8; 2]>> {
     let mut graph = HashMap::<[u8; 2], HashSet<[u8; 2]>>::new();
     for line in input.lines() {
         let (u, v) = line.split_once('-').unwrap();
-        let u = <[u8; 2]>::try_from(u.as_bytes()).unwrap();
-        let v = <[u8; 2]>::try_from(v.as_bytes()).unwrap();
+        let u = u.as_bytes().try_into().unwrap();
+        let v = v.as_bytes().try_into().unwrap();
         graph.entry(u).or_default().insert(v);
         graph.entry(v).or_default().insert(u);
     }
@@ -46,21 +46,20 @@ pub fn part_two(input: &str) -> Option<String> {
                     .collect_vec()
                     .into_iter()
                     .rev()
-                    .filter(|ws| {
+                    .find(|ws| {
                         let ws_set: HashSet<[u8; 2]> =
-                            HashSet::from_iter(ws.clone().into_iter().map(|&w| w));
+                            HashSet::from_iter(ws.clone().into_iter().copied());
                         ws.into_iter().all(|&&w| {
                             ws_set.is_subset(
                                 &graph
                                     .get(&w)
                                     .unwrap()
                                     .union(&HashSet::from([w]))
-                                    .map(|&w| w)
+                                    .copied()
                                     .collect(),
                             )
                         })
                     })
-                    .next()
                     .unwrap()
                     .into_iter()
                     .chain([u])
@@ -68,7 +67,7 @@ pub fn part_two(input: &str) -> Option<String> {
             })
             .max_by_key(|us| us.len())?
             .into_iter()
-            .sorted()
+            .sorted_unstable()
             .flat_map(|v| String::from_utf8(v.to_vec()))
             .join(","),
     )

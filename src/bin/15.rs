@@ -8,7 +8,7 @@ advent_of_code::solution!(15);
 fn common(
     input: &str,
     load_txt: fn(&str) -> Matrix<u8>,
-    push: fn(&mut Matrix<u8>, IJ, IJ, &Vec<u8>) -> IJ,
+    push: fn(&mut Matrix<u8>, IJ, IJ, &[u8]) -> IJ,
     box_bytes: Vec<u8>,
 ) -> Option<u32> {
     const MULTIPLIER: Index = 100;
@@ -41,7 +41,7 @@ fn common(
     )
 }
 
-fn push_line(mat: &mut Matrix<u8>, ij: IJ, dij: IJ, box_bytes: &Vec<u8>) -> IJ {
+fn push_line(mat: &mut Matrix<u8>, ij: IJ, dij: IJ, box_bytes: &[u8]) -> IJ {
     let mut k = 1;
     loop {
         match mat[ij + k * dij] {

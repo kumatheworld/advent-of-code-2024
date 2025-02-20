@@ -55,7 +55,7 @@ pub fn common(input: &str, num_intermediate_robots: usize) -> Option<u64> {
                         let mut counter_new = HashMap::<(u8, u8), u64>::new();
                         counter.into_iter().for_each(|(k, v)| {
                             std::iter::once(b'A')
-                                .chain(kk2ks.get(&k).unwrap().into_iter().map(|&a| a))
+                                .chain(kk2ks.get(&k).unwrap().iter().copied())
                                 .tuple_windows()
                                 .for_each(|ab| *counter_new.entry(ab).or_insert(0) += v)
                         });

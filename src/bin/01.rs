@@ -16,8 +16,8 @@ pub fn part_one(input: &str) -> Option<u32> {
     let (left, right) = parse(input);
     Some(
         left.into_iter()
-            .sorted()
-            .zip(right.into_iter().sorted())
+            .sorted_unstable()
+            .zip(right.into_iter().sorted_unstable())
             .map(|(m, n)| m.abs_diff(n))
             .sum(),
     )
